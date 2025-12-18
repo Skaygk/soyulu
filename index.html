@@ -1,1 +1,116 @@
-<!DOCTYPE html> <html lang="es"> <head>     <meta charset="UTF-8">     <meta name="viewport" content="width=device-width, initial-scale=1.0">     <title>SIGMIZA</title>     <style>         body {             margin: 0;             padding: 10px;             font-family: 'Courier New', monospace;             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);             display: flex;             justify-content: center;             align-items: center;             flex-direction: column;             height: 100vh;             text-align: center;             box-sizing: border-box;         }         h1 {             color: #9b59b6;             font-size: clamp(24px, 8vw, 80px);             text-shadow: 0 0 5px #9b59b6, 0 0 10px #9b59b6, 0 0 20px #9b59b6, 0 0 30px #4b0082, 0 0 40px #4b0082, 0 0 50px #4b0082;         }         .button-container {             margin: 20px 0;         }         .button-container button {             padding: 10px 20px;             font-size: 18px;             color: #fff;             background: #9b59b6;             border: none;             border-radius: 5px;             cursor: pointer;             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);             transition: background 0.3s, transform 0.2s;         }         .button-container button:hover {             background: #8e44ad;             transform: scale(1.05);         }         .folder {             margin: 10px 0;             width: 80%;             max-width: 600px;         }         .folder .folder-header {             display: flex;             align-items: center;             cursor: pointer;             background: rgba(155, 89, 182, 0.3);             padding: 15px;             border-radius: 5px;             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);             transition: background 0.3s;         }         .folder .folder-header:hover {             background: rgba(155, 89, 182, 0.5);         }         .folder .folder-header span {             font-size: 24px;             margin-right: 10px;         }         .folder .folder-header h2 {             color: #9b59b6;             margin: 0;             font-size: 20px;             text-shadow: 0 0 5px #9b59b6, 0 0 10px #9b59b6;         }         .folder .folder-content {             display: none;             margin-top: 10px;             border-top: 1px solid #9b59b6;             padding: 10px;         }         .folder .folder-content img,         .folder .folder-content video {             max-width: 100%;             margin-bottom: 10px;         }     </style>     <script>         function toggleFolder(folderElement) {             const content = folderElement.querySelector('.folder-content');             if (content.style.display === 'block') {                 content.style.display = 'none';             } else {                 content.style.display = 'block';             }         }     </script> </head> <body>     <h1>SIGMIZA</h1>     <div class="button-container">         <button onclick="window.location.href='https://imagehub.fun/P54OYO.link'">Ir a SIGMIZA</button>     </div>     <div class="folder" onclick="toggleFolder(this)">         <div class="folder-header">             <span>📂</span>             <h2>Carpeta 1</h2>         </div>         <div class="folder-content">             <p>Contenido de la carpeta:</p>             <img src="ruta_a_tu_imagen.jpg" alt="Descripción de la imagen">             <video src="ruta_a_tu_video.mp4" controls></video>         </div>     </div>     <!-- Crear nuevas carpetas copiando la estructura --> </body> </html>
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIGMIZA</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #000000;
+        color: #FFFFFF;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      h1 {
+        color: #9400D3;
+        font-size: 3em;
+        margin: 20px 0;
+      }
+
+      .folder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px;
+        cursor: pointer;
+        color: #9400D3;
+      }
+
+      .folder .content {
+        display: none;
+        flex-direction: column;
+        margin-top: 10px;
+      }
+
+      .folder-title {
+        font-size: 1.5em;
+        margin-right: 10px;
+      }
+
+      .content img,
+      .content video {
+        max-width: 90%;
+        margin: 10px auto;
+        display: block;
+      }
+
+      .content-title {
+        color: #9400D3;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+
+      #group-button {
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background-color: #9400D3;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      #group-button:hover {
+        background-color: #6A0DAD;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SIGMIZA</h1>
+
+    <div class="folder" onclick="toggleFolder('folder1')">
+      <span class="folder-title">📂 Carpeta 1</span>
+      <div class="content" id="folder1">
+        <div>
+          <div class="content-title">Imagen 1</div>
+          <img src="https://via.placeholder.com/300" alt="Imagen 1" />
+        </div>
+        <div>
+          <div class="content-title">Video 1</div>
+          <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls></video>
+        </div>
+      </div>
+    </div>
+
+    <div class="folder" onclick="toggleFolder('folder2')">
+      <span class="folder-title">📂 Carpeta 2</span>
+      <div class="content" id="folder2">
+        <div>
+          <div class="content-title">Imagen 2</div>
+          <img src="https://via.placeholder.com/300" alt="Imagen 2" />
+        </div>
+        <div>
+          <div class="content-title">Video 2</div>
+          <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls></video>
+        </div>
+      </div>
+    </div>
+
+    <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
+
+    <script>
+      function toggleFolder(folderId) {
+        const folderContent = document.getElementById(folderId);
+        if (folderContent.style.display === "flex") {
+          folderContent.style.display = "none";
+        } else {
+          folderContent.style.display = "flex";
+        }
+      }
+    </script>
+  </body>
+</html>
