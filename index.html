@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGMIZA</title>
     <style>
-        /* Estilo de la página */
-        body {
+              body {
             margin: 0;
-            padding: 0;
-            font-family: 'Courier New', monospace; /* Fuente monospace para ASCII */
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Fondo degradado */
+            padding: 10px; 
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             text-align: center;
+            box-sizing: border-box;
         }
-
-        /* Estilo del ASCII art */
         pre {
-            color: #9b59b6; /* Morado */
-            font-size: 18px;
+            color: #9b59b6; 
+            font-size: 5vw; 
             line-height: 1.1;
-            text-shadow: 2px 2px 5px #4b0082; /* Sombra morada oscura */
+            text-shadow: 2px 2px 5px #4b0082; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+        }
+        @media (max-width: 400px) {
+            pre {
+                font-size: 4vw;
+            }
         }
     </style>
 </head>
