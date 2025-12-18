@@ -31,106 +31,29 @@
       }
 
       .folder {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        display: inline-block;
         margin: 20px;
-        cursor: pointer;
+        text-decoration: none;
         color: #9400D3;
-        width: 200px;
-        height: 200px;
+        font-size: 1.5em;
+        padding: 15px;
         border: 2px solid #9400D3;
         border-radius: 10px;
-        box-shadow: 0 0 10px #9400D3;
+        transition: background-color 0.3s, color 0.3s;
       }
 
-      .folder .content {
-        display: none;
-        flex-direction: column;
-        margin-top: 10px;
-      }
-
-      .folder-title {
-        font-size: 1.5em;
-        margin-right: 10px;
-      }
-
-      .content img,
-      .content video {
-        max-width: 90%;
-        margin: 10px auto;
-        display: block;
-      }
-
-      .content-title {
-        color: #9400D3;
-        font-size: 1.2em;
-        margin-bottom: 10px;
-      }
-
-      #group-button {
-        padding: 10px 20px;
-        font-size: 1em;
-        color: white;
+      .folder:hover {
         background-color: #9400D3;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        text-decoration: none;
-      }
-
-      #group-button:hover {
-        background-color: #6A0DAD;
+        color: white;
       }
     </style>
   </head>
   <body>
     <h1>SIGMIZA</h1>
 
-    <div class="folder" onclick="toggleFolder('folder1')">
-      <span class="folder-title">📂 Day</span>
-      <div class="content" id="folder1">
-        <div>
-          <div class="content-title">phone</div>
-          <img src="IMG_3707.png" alt="Imagen 1" />
-        </div>
-        <div>
-        <div class="content-title">mail</div>
-           <img src="IMG_3612.png" alt="Imagen" />
-      </div>
-        <div>
-          <div class="content-title">acta</div>
-           <img src="23E23C6B-DA55-413A-8F59-4B4F97CA9B39.png" alt="Imagen" />
-        </div>
-      </div>
-    </div>
-
-    <div class="folder" onclick="toggleFolder('folder2')">
-      <span class="folder-title">📂 proximamente</span>
-      <div class="content" id="folder2">
-        <div>
-          <div class="content-title">proximamente</div>
-         
-        </div>
-        <div>
-          <div class="content-title">proximamente</div>
-          <video src="" controls></video>
-        </div>
-      </div>
-    </div>
+    <a class="folder" href="day/index.html">📂 Day</a>
+    <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
 
     <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
-
-    <script>
-      function toggleFolder(folderId) {
-        const folderContent = document.getElementById(folderId);
-        if (folderContent.style.display === "flex") {
-          folderContent.style.display = "none";
-        } else {
-          folderContent.style.display = "flex";
-        }
-      }
-    </script>
   </body>
 </html>
