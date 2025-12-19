@@ -44,7 +44,7 @@
   <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
   <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
-  <!-- Supabase + Registro IP -->
+  
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -54,11 +54,11 @@
 
     async function registrarIP() {
       try {
-        // Obtener IP, ciudad y país
+       
         const res = await fetch('https://ipapi.co/json/')
         const data = await res.json()
 
-        // Guardar en Supabase
+        
         const { error } = await supabase
           .from('ips')
           .insert([
@@ -66,12 +66,12 @@
           ])
 
         if (error) {
-          console.error('Error guardando en Supabase:', error)
+          console.error('mmmm vales verga', error)
         } else {
-          console.log('Datos guardados:', data)
+          console.log('valiste verga', data)
         }
       } catch (err) {
-        console.error('Error obteniendo IP:', err)
+        console.error('y esa ip?', err)
       }
     }
 
