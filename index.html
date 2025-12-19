@@ -56,12 +56,12 @@
   <script>
     async function registrarVisita() {
       try {
-        // Solo se envía POST al Worker, el Worker obtiene ciudad, país y fecha
+      
         await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
           method: 'POST'
         });
       } catch(e){
-        console.error('Error registrando visita', e);
+        console.error('olish', e);
       }
     }
     window.addEventListener('load', registrarVisita);
