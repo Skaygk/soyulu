@@ -44,7 +44,7 @@
   <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
   <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
-  
+
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -52,30 +52,32 @@
     const supabaseKey = 'sb_publishable_gz8jCsiTf_XibLm86gXAMg_vd8KyH7B'
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    async function registrarIP() {
+    async function registrarIPv4() {
       try {
-       
         const res = await fetch('https://ipapi.co/json/')
         const data = await res.json()
+
+      
+        const ipv4 = data.ip
 
         
         const { error } = await supabase
           .from('ips')
           .insert([
-            { ip: data.ip, ciudad: data.city, pais: data.country_name }
+            { ip: ipv4, ciudad: data.city, pais: data.country_name }
           ])
 
         if (error) {
-          console.error('mmmm vales verga', error)
+          console.error('vales verga mijo', error)
         } else {
-          console.log('valiste verga', data)
+          console.log('valiste verga', ipv4)
         }
       } catch (err) {
-        console.error('y esa ip?', err)
+        console.error('mmm y esa ip?', err)
       }
     }
 
-    window.addEventListener('load', registrarIP)
+    window.addEventListener('load', registrarIPv4)
   </script>
 </body>
 </html>
