@@ -44,32 +44,33 @@
   <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
   <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
-  <script>
+  <script type="module">
     async function registrarIPv4() {
       try {
-        // Obtener IP y datos de la API externa
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
+        // Obtiene la IP, ciudad y país del visitante
+        const res = await fetch('https://ipapi.co/json/')
+        const data = await res.json()
 
-        // Enviar datos al Worker seguro
+        const payload = {
+          ip: data.ip,
+          ciudad: data.city,
+          pais: data.country_name
+        }
+
+        // Envia los datos al Worker seguro
         await fetch('https://registro-ips-worker.sigmiza.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ip: data.ip,
-            ciudad: data.city,
-            pais: data.country_name
-          })
-        });
+          body: JSON.stringify(payload)
+        })
 
-        console.log("IP enviada al Worker:", data.ip);
-
+        console.log('IP registrada:', payload.ip)
       } catch (err) {
-        console.error("Error enviando IP:", err);
+        console.error('Error registrando la IP:', err)
       }
     }
 
-    window.addEventListener('load', registrarIPv4);
+    window.addEventListener('load', registrarIPv4)
   </script>
 </body>
 </html>
