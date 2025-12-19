@@ -6,32 +6,30 @@
 <title>SIGMIZA</title>
 <style>
 body { 
-  font-family:Arial,
-  sans-serif;
+  font-family: Arial, sans-serif;
   background-color: #000;
   color: #9400D3;
   text-align:center;
+  margin:0;
+  padding:0;
 }
 h1 {
   font-size:3em;
   animation: pulse 1.5s infinite;
 }
 @keyframes pulse { 
-  0%,100%
-  { text-shadow:0 0 5px #9400D3;
-  } 
-  50%
-  { text-shadow:0 0 20px #FF00FF;
-  } 
+  0%,100% { text-shadow:0 0 5px #9400D3; } 
+  50% { text-shadow:0 0 20px #FF00FF; } 
 }
-.folder { margin: 20px;
-         padding: 15px; 
-         border: 2px solid #9400D3;
-         border-radius:10px; 
-         color:#9400D3;
-         text-decoration:none; 
-         transition:0.3s; 
-        }
+.folder { 
+  margin: 20px;
+  padding: 15px; 
+  border: 2px solid #9400D3;
+  border-radius:10px; 
+  color:#9400D3;
+  text-decoration:none; 
+  transition:0.3s; 
+}
 .folder:hover {
   background:#9400D3;
   color:white; 
@@ -47,13 +45,14 @@ h1 {
 <script>
 async function registrarIPv4() {
   try {
-    const res = await fetch('https://ipapi.co/json/')
+    // Obtener la IP del visitante
+    const res = await fetch('https://api.ipify.org?format=json')
     const data = await res.json()
 
     const payload = {
       ip: data.ip,
-      ciudad: data.city,
-      pais: data.country_name
+      ciudad: 'Desconocida',
+      pais: 'Desconocido'
     }
 
     const response = await fetch('https://registro-ips-worker.sigmiza.workers.dev/', {
@@ -65,7 +64,7 @@ async function registrarIPv4() {
     if (!response.ok) throw new Error('Error registrando la IP')
     console.log('IP registrada:', payload.ip)
   } catch(err) {
-    console.error(err)
+    console.error('Error registrando la IP:', err)
   }
 }
 
