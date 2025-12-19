@@ -1,49 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SIGMIZA</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #000;
+      background: #000;
       color: #9400D3;
       text-align: center;
       margin: 0;
       padding: 0;
     }
-
     h1 {
       font-size: 3em;
       margin: 20px 0;
       animation: pulse 1.5s infinite;
     }
-
     @keyframes pulse {
-      0%, 100% { text-shadow: 0 0 5px #9400D3; }
-      50% { text-shadow: 0 0 20px #FF00FF; }
+      0%,
+      100% {
+        text-shadow: 0 0 5px #9400d3;
+      }
+      50% {
+        text-shadow: 0 0 20px #ff00ff;
+      }
     }
-
-
     .folder {
       display: inline-block;
       margin: 20px;
       padding: 15px 25px;
-      border: 2px solid #9400D3;
+      border: 2px solid #9400d3;
       border-radius: 10px;
-      color: #9400D3;
+      color: #9400d3;
       text-decoration: none;
       font-size: 1.5em;
       transition: all 0.3s ease;
     }
-
     .folder:hover {
-      background-color: #9400D3;
+      background: #9400d3;
       color: #fff;
     }
-
-    /* Pie de página */
     footer {
       margin-top: 40px;
       font-size: 0.9em;
@@ -53,35 +51,31 @@
 </head>
 <body>
   <h1>SIGMIZA</h1>
-
   <a class="folder" href="day/index.html">📂 Day</a>
   <a class="folder" href="proximamente/index.html">📂 Próximamente</a>
   <a class="folder" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
-
   <footer>© SIGMIZA</footer>
 
   <script>
     async function registrarVisita() {
       try {
-        const ipData = await fetch('https://ipapi.co/json/').then(res => res.json());
-
+        
+        const ipData = await fetch('https://api.ipify.org?format=json').then(res => res.json());
         const ipv4Regex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
-        if (!ipv4Regex.test(ipData.ip)) return;
 
-        const payload = {
-          ip: ipData.ip,
-          ciudad: ipData.city || 'Desconocida',
-          pais: ipData.country_name || 'Desconocido',
-          fecha: new Date().toISOString()
-        };
+        if (!ipv4Regex.test(ipData.ip)) {
+          console.log('osh', ipData.ip);
+          return;
+        }
 
+        
         await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ ip: ipData.ip })
         });
       } catch (e) {
-        console.error('Error al registrar visita', e);
+        console.error('pto gay', e);
       }
     }
 
