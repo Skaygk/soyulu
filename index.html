@@ -56,14 +56,20 @@
   <script>
     async function registrarVisita() {
       try {
-      
         await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
-          method: 'POST'
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Origin': 'https://soyulu.xyz'  // Importante para CORS
+          },
+          body: JSON.stringify({})
         });
       } catch(e){
-        console.error('olish', e);
+        console.error('Error al registrar visita', e);
       }
     }
+
+    // Registrar visita al cargar la página
     window.addEventListener('load', registrarVisita);
   </script>
 </body>
