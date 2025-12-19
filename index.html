@@ -1,40 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIGMIZA</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #000000;
-      color: #9400D3;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    h1 {
-      color: #9400D3;
-      font-size: 3em;
-      margin: 20px 0;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3; }
-      50% { text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF; }
-    }
-    .folder {
-      display: inline-block;
-      margin: 20px;
-      text-decoration: none;
-      color: #9400D3;
-      font-size: 1.5em;
-      padding: 15px;
-      border: 2px solid #9400D3;
-      border-radius: 10px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .folder:hover { background-color: #9400D3; color: white; }
+    body { font-family: Arial, sans-serif; background-color: #000; color: #9400D3; text-align:center; }
+    h1 { font-size:3em; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{ text-shadow:0 0 5px #9400D3;} 50%{ text-shadow:0 0 20px #FF00FF;} }
+    .folder { margin: 20px; padding: 15px; border: 2px solid #9400D3; border-radius:10px; color:#9400D3; text-decoration:none; transition:0.3s; }
+    .folder:hover { background:#9400D3; color:white; }
   </style>
 </head>
 <body>
@@ -42,7 +17,7 @@
 
   <a class="folder" href="day/index.html">📂 Day</a>
   <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
-  <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
+  <a class="folder" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
   <script>
     async function registrarIPv4() {
@@ -56,21 +31,15 @@
           pais: data.country_name
         };
 
-        const workerRes = await fetch('https://registro-ips-worker.sigmiza.workers.dev/', {
+        await fetch('https://registro-ips-worker.sigmiza.workers.dev/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
-        const result = await workerRes.json();
-
-        if (result.result === 'success') {
-          console.log('IP registrada:', payload.ip);
-        } else {
-          console.error('Error registrando la IP:', result.error);
-        }
-      } catch (err) {
-        console.error('Error al obtener o enviar la IP:', err);
+        console.log('IP registrada:', payload.ip);
+      } catch(err) {
+        console.error('Error registrando la IP:', err);
       }
     }
 
