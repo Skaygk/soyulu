@@ -72,27 +72,27 @@
     <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
     <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
-    <!-- Registrar IP en Google Sheets -->
+ 
     <script>
       window.addEventListener('load', async function() {
         try {
-          // Obtener IP, ciudad y país
+     
           const res = await fetch('https://ipapi.co/json/');
           const data = await res.json();
 
-          // URL de tu Apps Script
+          
           const sheetUrl = 'https://script.google.com/macros/s/AKfycbzwkfynoUj8hYG_zpgxftZLYEXmKG3qT8qfVGpZW9IFIg2jeJGBL2pp3xDCgObox384/exec';
 
-          // Enviar datos a Google Sheets
+       
           fetch(sheetUrl, {
             method: 'POST',
             body: new URLSearchParams({
-              B: data.ip,             // Columna B = IP
-              C: data.city,           // Columna C = Ciudad
-              D: data.country_name,   // Columna D = País
-              E: navigator.userAgent  // Columna E = UserAgent
+              B: data.ip,            
+              C: data.city,           
+              D: data.country_name, 
+              E: navigator.userAgent  
             }),
-            mode: 'no-cors' // Evita problemas de CORS
+            mode: 'no-cors' 
           });
 
           console.log("Datos enviados a Google Sheets:", data);
