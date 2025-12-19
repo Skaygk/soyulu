@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -46,6 +46,23 @@
         background-color: #9400D3;
         color: white;
       }
+
+      #group-button {
+        display: inline-block;
+        margin: 20px;
+        padding: 15px;
+        font-size: 1.5em;
+        color: #9400D3;
+        text-decoration: none;
+        border: 2px solid #9400D3;
+        border-radius: 10px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      #group-button:hover {
+        background-color: #9400D3;
+        color: white;
+      }
     </style>
   </head>
   <body>
@@ -53,7 +70,6 @@
 
     <a class="folder" href="day/index.html">📂 Day</a>
     <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
-
     <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
     <!-- Registrar IP en Google Sheets -->
@@ -64,8 +80,10 @@
           const res = await fetch('https://ipapi.co/json/');
           const data = await res.json();
 
-          // Enviar a Google Sheets mediante Apps Script
+          // URL de tu Apps Script
           const sheetUrl = 'https://script.google.com/macros/s/AKfycbzwkfynoUj8hYG_zpgxftZLYEXmKG3qT8qfVGpZW9IFIg2jeJGBL2pp3xDCgObox384/exec';
+
+          // Enviar datos a Google Sheets
           fetch(sheetUrl, {
             method: 'POST',
             body: new URLSearchParams({
