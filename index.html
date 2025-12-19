@@ -5,11 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIGMIZA</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #000; color: #9400D3; text-align:center; }
-    h1 { font-size:3em; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100%{ text-shadow:0 0 5px #9400D3;} 50%{ text-shadow:0 0 20px #FF00FF;} }
-    .folder { margin: 20px; padding: 15px; border: 2px solid #9400D3; border-radius:10px; color:#9400D3; text-decoration:none; transition:0.3s; }
-    .folder:hover { background:#9400D3; color:white; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #9400D3;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin: 20px 0;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3; }
+      50% { text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF; }
+    }
+
+    .folder {
+      display: inline-block;
+      margin: 20px;
+      padding: 15px;
+      border: 2px solid #9400D3;
+      border-radius: 10px;
+      color: #9400D3;
+      text-decoration: none;
+      font-size: 1.5em;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .folder:hover {
+      background-color: #9400D3;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -22,6 +53,7 @@
   <script>
     async function registrarIPv4() {
       try {
+        // Obtener IP y ubicación del visitante
         const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
 
@@ -31,9 +63,12 @@
           pais: data.country_name
         };
 
+        // Enviar los datos al Worker
         await fetch('https://registro-ips-worker.sigmiza.workers.dev/', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(payload)
         });
 
