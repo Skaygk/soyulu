@@ -13,15 +13,19 @@
       margin: 0;
       padding: 0;
     }
+
     h1 {
       font-size: 3em;
       margin: 20px 0;
       animation: pulse 1.5s infinite;
     }
+
     @keyframes pulse {
-      0%,100% { text-shadow: 0 0 5px #9400D3; }
+      0%, 100% { text-shadow: 0 0 5px #9400D3; }
       50% { text-shadow: 0 0 20px #FF00FF; }
     }
+
+
     .folder {
       display: inline-block;
       margin: 20px;
@@ -33,10 +37,13 @@
       font-size: 1.5em;
       transition: all 0.3s ease;
     }
+
     .folder:hover {
       background-color: #9400D3;
       color: #fff;
     }
+
+    /* Pie de página */
     footer {
       margin-top: 40px;
       font-size: 0.9em;
@@ -56,8 +63,10 @@
   <script>
     async function registrarVisita() {
       try {
-      
         const ipData = await fetch('https://ipapi.co/json/').then(res => res.json());
+
+        const ipv4Regex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+        if (!ipv4Regex.test(ipData.ip)) return;
 
         const payload = {
           ip: ipData.ip,
@@ -66,16 +75,13 @@
           fecha: new Date().toISOString()
         };
 
-      
         await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
-        console.log('ola pto', payload);
-      } catch(e) {
-        console.error('GAY', e);
+      } catch (e) {
+        console.error('Error al registrar visita', e);
       }
     }
 
