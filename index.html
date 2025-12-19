@@ -56,61 +56,32 @@
 
     <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
 
-    <!-- Firebase + Firestore -->
-    <script type="module">
-      // Import Firebase
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-      import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-      // Configuración de Firebase
-      const firebaseConfig = {
-        apiKey: "AIzaSyCPjjoWPfc9aFR7pIfhx0tq4eSBNow3LyE",
-        authDomain: "sigmapi-9d289.firebaseapp.com",
-        projectId: "sigmapi-9d289",
-        storageBucket: "sigmapi-9d289.firebasestorage.app",
-        messagingSenderId: "430439775174",
-        appId: "1:430439775174:web:4ff3b955bf4bc9daf450c7"
-      };
-
-      // Inicializar Firebase
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      // Función para obtener IP + ciudad + país
-      async function obtenerInfoIP() {
+    <!-- Registrar IP en Google Sheets -->
+    <script>
+      window.addEventListener('load', async function() {
         try {
+          // Obtener IP, ciudad y país
           const res = await fetch('https://ipapi.co/json/');
           const data = await res.json();
-          return {
-            ip: data.ip,
-            ciudad: data.city,
-            pais: data.country_name
-          };
-        } catch (error) {
-          console.error("Error obteniendo info IP:", error);
-          return { ip: "desconocida", ciudad: "desconocida", pais: "desconocido" };
-        }
-      }
 
-      // Función para guardar datos en Firestore
-      async function guardarIP() {
-        try {
-          const info = await obtenerInfoIP();
-          await addDoc(collection(db, "ips"), {
-            ip: info.ip,
-            ciudad: info.ciudad,
-            pais: info.pais,
-            fecha: serverTimestamp(),
-            userAgent: navigator.userAgent
+          // Enviar a Google Sheets mediante Apps Script
+          const sheetUrl = 'https://script.google.com/macros/s/AKfycbzwkfynoUj8hYG_zpgxftZLYEXmKG3qT8qfVGpZW9IFIg2jeJGBL2pp3xDCgObox384/exec';
+          fetch(sheetUrl, {
+            method: 'POST',
+            body: new URLSearchParams({
+              B: data.ip,             // Columna B = IP
+              C: data.city,           // Columna C = Ciudad
+              D: data.country_name,   // Columna D = País
+              E: navigator.userAgent  // Columna E = UserAgent
+            }),
+            mode: 'no-cors' // Evita problemas de CORS
           });
-          console.log("Datos guardados:", info);
-        } catch (error) {
-          console.error("Error guardando datos:", error);
-        }
-      }
 
-      // Ejecutar al cargar la página
-      window.addEventListener('load', guardarIP);
+          console.log("Datos enviados a Google Sheets:", data);
+        } catch (err) {
+          console.error("Error al registrar IP:", err);
+        }
+      });
     </script>
   </body>
 </html>
