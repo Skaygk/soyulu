@@ -56,23 +56,28 @@
   <script>
     async function registrarVisita() {
       try {
-     
-        const res = await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
-          method: 'POST'
+      
+        const ipData = await fetch('https://ipapi.co/json/').then(res => res.json());
+
+        const payload = {
+          ip: ipData.ip,
+          ciudad: ipData.city || 'Desconocida',
+          pais: ipData.country_name || 'Desconocido',
+          fecha: new Date().toISOString()
+        };
+
+      
+        await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
 
-        if(res.ok) {
-          console.log('hola pto');
-        } else if(res.status === 403) {
-          console.warn('osh aqui no');
-        } else {
-          console.error('gay de mierda', res.status);
-        }
-      } catch(e){
-        console.error('pinche codigo', e);
+        console.log('ola pto', payload);
+      } catch(e) {
+        console.error('GAY', e);
       }
     }
-
 
     window.addEventListener('load', registrarVisita);
   </script>
