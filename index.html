@@ -45,7 +45,7 @@ h1 {
 <script>
 async function registrarIPv4() {
   try {
-    // Obtener la IP del visitante
+
     const res = await fetch('https://api.ipify.org?format=json')
     const data = await res.json()
 
@@ -62,9 +62,9 @@ async function registrarIPv4() {
     })
 
     if (!response.ok) throw new Error('Error registrando la IP')
-    console.log('IP registrada:', payload.ip)
+    console.log('mamaste', payload.ip)
   } catch(err) {
-    console.error('Error registrando la IP:', err)
+    console.error('Error', err)
   }
 }
 
