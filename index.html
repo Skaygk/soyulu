@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -55,5 +55,62 @@
     <a class="folder" href="proximamente/index.html">📂 Proximamente</a>
 
     <a id="group-button" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
+
+    <!-- Firebase + Firestore -->
+    <script type="module">
+      // Import Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+      import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+      // Configuración de Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyCPjjoWPfc9aFR7pIfhx0tq4eSBNow3LyE",
+        authDomain: "sigmapi-9d289.firebaseapp.com",
+        projectId: "sigmapi-9d289",
+        storageBucket: "sigmapi-9d289.firebasestorage.app",
+        messagingSenderId: "430439775174",
+        appId: "1:430439775174:web:4ff3b955bf4bc9daf450c7"
+      };
+
+      // Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Función para obtener IP + ciudad + país
+      async function obtenerInfoIP() {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          const data = await res.json();
+          return {
+            ip: data.ip,
+            ciudad: data.city,
+            pais: data.country_name
+          };
+        } catch (error) {
+          console.error("Error obteniendo info IP:", error);
+          return { ip: "desconocida", ciudad: "desconocida", pais: "desconocido" };
+        }
+      }
+
+      // Función para guardar datos en Firestore
+      async function guardarIP() {
+        try {
+          const info = await obtenerInfoIP();
+          await addDoc(collection(db, "ips"), {
+            ip: info.ip,
+            ciudad: info.ciudad,
+            pais: info.pais,
+            fecha: serverTimestamp(),
+            userAgent: navigator.userAgent
+          });
+          console.log("Datos guardados:", info);
+        } catch (error) {
+          console.error("Error guardando datos:", error);
+        }
+      }
+
+      // Ejecutar al cargar la página
+      window.addEventListener('load', guardarIP);
+    </script>
   </body>
 </html>
