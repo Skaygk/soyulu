@@ -1,1 +1,3 @@
-fetch('/api/track'); 
+fetch('/api/track', {
+  method: 'POST'
+});
