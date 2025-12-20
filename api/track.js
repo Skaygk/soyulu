@@ -6,6 +6,10 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(200).end();
+  }
+
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
   const country = req.headers['x-vercel-ip-country'] || 'Unknown';
   const city = req.headers['x-vercel-ip-city'] || 'Unknown';
