@@ -5,7 +5,7 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-const ADMIN_PASS = process.env.ADMIN_PASS;
+const ADMIN_PASS = process.env.ADMIN_PASSWORD;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

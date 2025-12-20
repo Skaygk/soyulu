@@ -54,12 +54,11 @@
   <script>
     async function registrarVisita() {
       try {
-        await fetch('/api/track', {
-          method: 'POST'
-        });
-        console.log('mamaste');
-      } catch (e) {
-        console.error('gay', e);
+        const res = await fetch('/api/track', { method: 'POST' });
+        const data = await res.json();
+        console.log('ez follado', data);
+      } catch (err) {
+        console.error('pto', err);
       }
     }
 
