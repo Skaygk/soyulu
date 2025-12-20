@@ -1,0 +1,35 @@
+<h1>Panel de visitas</h1>
+<input type="password" id="pass" placeholder="Contraseña">
+<button onclick="load()">Entrar</button>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>IP</th>
+      <th>País</th>
+      <th>Ciudad</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody id="data"></tbody>
+</table>
+
+<script>
+async function load() {
+  const pass = document.getElementById('pass').value;
+  const res = await fetch('/api/admin', { headers: { authorization: pass } });
+
+  if (!res.ok) return alert('Contraseña incorrecta');
+
+  const data = await res.json();
+  document.getElementById('data').innerHTML =
+    data.map(v =>
+      `<tr>
+        <td>${v.ip}</td>
+        <td>${v.country}</td>
+        <td>${v.city}</td>
+        <td>${new Date(v.created_at).toLocaleString()}</td>
+      </tr>`
+    ).join('');
+}
+</script>

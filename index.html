@@ -19,13 +19,8 @@
       animation: pulse 1.5s infinite;
     }
     @keyframes pulse {
-      0%,
-      100% {
-        text-shadow: 0 0 5px #9400d3;
-      }
-      50% {
-        text-shadow: 0 0 20px #ff00ff;
-      }
+      0%, 100% { text-shadow: 0 0 5px #9400d3; }
+      50% { text-shadow: 0 0 20px #ff00ff; }
     }
     .folder {
       display: inline-block;
@@ -59,23 +54,12 @@
   <script>
     async function registrarVisita() {
       try {
-        
-        const ipData = await fetch('https://api.ipify.org?format=json').then(res => res.json());
-        const ipv4Regex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
-
-        if (!ipv4Regex.test(ipData.ip)) {
-          console.log('osh', ipData.ip);
-          return;
-        }
-
-        
-        await fetch('https://registro-ips-worker.sigmiza.workers.dev/collect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ip: ipData.ip })
+        await fetch('/api/track', {
+          method: 'POST'
         });
+        console.log('mamaste');
       } catch (e) {
-        console.error('pto gay', e);
+        console.error('gay', e);
       }
     }
 
