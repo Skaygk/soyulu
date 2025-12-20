@@ -1,68 +1,135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SIGMIZA</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #9400D3;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      font-size: 3em;
-      margin: 20px 0;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { text-shadow: 0 0 5px #9400d3; }
-      50% { text-shadow: 0 0 20px #ff00ff; }
-    }
-    .folder {
-      display: inline-block;
-      margin: 20px;
-      padding: 15px 25px;
-      border: 2px solid #9400d3;
-      border-radius: 10px;
-      color: #9400d3;
-      text-decoration: none;
-      font-size: 1.5em;
-      transition: all 0.3s ease;
-    }
-    .folder:hover {
-      background: #9400d3;
-      color: #fff;
-    }
-    footer {
-      margin-top: 40px;
-      font-size: 0.9em;
-      opacity: 0.7;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGMIZA</title>
+<style>
+body {
+  font-family: Arial;
+  background: #000;
+  color: #9400D3;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+h1 {
+  font-size: 3em;
+  margin: 20px 0;
+  animation: parpadeo 1.5s infinite;
+}
+
+@keyframes parpadeo {
+  0%, 100% { text-shadow: 0 0 5px #9400d3; }
+  50% { text-shadow: 0 0 20px #ff00ff; }
+}
+
+table {
+  width: 90%;
+  max-width: 900px;
+  margin: 30px auto;
+  border-collapse: collapse;
+  font-size: 1em;
+  color: #fff;
+}
+
+th, td {
+  border: 2px solid #9400D3;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #120012;
+  color: #b84cff;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #1a001a;
+}
+
+tbody tr:hover {
+  background-color: #330033;
+}
+
+footer {
+  margin-top: 40px;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+.upload-btn {
+  display: inline-block;
+  margin: 20px auto;
+  padding: 12px 25px;
+  border: 2px solid #9400D3;
+  border-radius: 8px;
+  color: #9400D3;
+  text-decoration: none;
+  font-size: 1.2em;
+  transition: 0.3s;
+}
+
+.upload-btn:hover {
+  background: #9400D3;
+  color: #fff;
+}
+</style>
 </head>
 <body>
-  <h1>SIGMIZA</h1>
-  <a class="folder" href="day/index.html">📂 Day</a>
-  <a class="folder" href="proximamente/index.html">📂 Próximamente</a>
-  <a class="folder" href="https://imagehub.fun/P54OYO.link" target="_blank">Nuestro Grupo</a>
-  <footer>© SIGMIZA</footer>
 
-  <script>
-    async function registrarVisita() {
-      try {
-        const res = await fetch('/api/track', { method: 'POST' });
-        const data = await res.json();
-        console.log('ez follado', data);
-      } catch (err) {
-        console.error('pto', err);
-      }
-    }
+<h1>SIGMIZA</h1>
 
-    window.addEventListener('load', registrarVisita);
-  </script>
+<a href="upload.html" class="upload-btn">Subir Carpeta</a>
+
+<table>
+  <thead>
+    <tr>
+      <th>Titulo</th>
+      <th>Autor</th>
+      <th>Contenido</th>
+      <th>Usuario</th>
+    </tr>
+  </thead>
+  <tbody id="carpetas"></tbody>
+</table>
+
+<footer>© SIGMIZA</footer>
+
+<script>
+async function registrarVisita() {
+  try {
+    await fetch('/api/track', { method: 'POST' });
+  } catch(err) {
+    console.error('Error al registrar visita', err);
+  }
+}
+
+async function cargarCarpetas() {
+  try {
+    const res = await fetch('/api/obtenerCarpetas');
+    const data = await res.json();
+    document.getElementById('carpetas').innerHTML = data.map(f => `
+      <tr>
+        <td>${f.titulo}</td>
+        <td>${f.autor}</td>
+        <td>${f.contenido}</td>
+        <td>${f.subido_por}</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    console.error(e);
+    document.getElementById('carpetas').innerHTML = `<tr><td colspan="4">No se pudieron cargar las carpetas</td></tr>`;
+  }
+}
+
+window.addEventListener('load', () => {
+  registrarVisita();
+  cargarCarpetas();
+});
+</script>
+
 </body>
 </html>
