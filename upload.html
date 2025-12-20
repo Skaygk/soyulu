@@ -22,6 +22,12 @@ input, textarea {
   color: #b84cff;
 }
 
+textarea {
+  height: 150px;
+  padding-top: 5px; 
+  resize: vertical; 
+}
+
 button {
   padding: 10px 20px;
   background: #b84cff;
@@ -38,7 +44,7 @@ button {
 
 <input id="titulo" placeholder="Titulo"><br>
 <input id="autor" placeholder="Autor"><br>
-<input id="contenido" placeholder="Contenido" style="width: 300px; height: 150px;"><br>
+<textarea id="contenido" placeholder="Contenido"></textarea><br>
 <input id="usuario" placeholder="Usuario"><br>
 <input type="password" id="contrasena" placeholder="Contraseña"><br>
 <button onclick="enviar()">Subir</button>
@@ -58,14 +64,28 @@ async function enviar() {
     return;
   }
 
-  const res = await fetch('/api/agregarCarpeta', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(datos)
-  });
+  try {
+    const res = await fetch('/api/agregarCarpeta', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(datos)
+    });
 
-  const r = await res.json();
-  alert(r.ok ? 'Subido correctamente' : r.error);
+    const r = await res.json();
+    alert(r.ok ? 'Subido correctamente' : r.error);
+    
+    if(r.ok){
+      titulo.value = '';
+      autor.value = '';
+      contenido.value = '';
+      usuario.value = '';
+      contrasena.value = '';
+    }
+
+  } catch(err){
+    console.error(err);
+    alert('Error al subir carpeta');
+  }
 }
 </script>
 

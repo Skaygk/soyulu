@@ -104,35 +104,48 @@ button {
 </div>
 
 <script>
-async function cargar() {
-  const res = await fetch('/api/obtenerCarpetas');
-  const data = await res.json();
-
-  const tbody = document.getElementById('lista');
-  tbody.innerHTML = '';
-
-  data.forEach(f => {
-    const tr = document.createElement('tr');
-
-    const t1 = document.createElement('td');
-    t1.textContent = f.titulo;
-
-    const t2 = document.createElement('td');
-    t2.textContent = f.autor;
-
-    const t3 = document.createElement('td');
-    t3.textContent = f.subido_por;
-
-    const t4 = document.createElement('td');
-    const btn = document.createElement('button');
-    btn.textContent = 'Ver';
-    btn.onclick = () => abrirModal(f);
-    t4.appendChild(btn);
-
-    tr.append(t1, t2, t3, t4);
-    tbody.appendChild(tr);
-  });
+async function registrarVisita() {
+  try {
+    await fetch('/api/track', { method: 'POST' });
+  } catch (err) {
+    console.error('Error al registrar visita', err);
+  }
 }
+
+async function cargar() {
+  try {
+    const res = await fetch('/api/obtenerCarpetas');
+    const data = await res.json();
+
+    const tbody = document.getElementById('lista');
+    tbody.innerHTML = '';
+
+    data.forEach(f => {
+      const tr = document.createElement('tr');
+
+      const t1 = document.createElement('td');
+      t1.textContent = f.titulo;
+
+      const t2 = document.createElement('td');
+      t2.textContent = f.autor;
+
+      const t3 = document.createElement('td');
+      t3.textContent = f.subido_por;
+
+      const t4 = document.createElement('td');
+      const btn = document.createElement('button');
+      btn.textContent = 'Ver';
+      btn.onclick = () => abrirModal(f);
+      t4.appendChild(btn);
+
+      tr.append(t1, t2, t3, t4);
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 
 function abrirModal(f) {
   document.getElementById('m-titulo').textContent = f.titulo;
@@ -145,7 +158,11 @@ document.getElementById('cerrar').onclick = () => {
   document.getElementById('modal').style.display = 'none';
 };
 
-window.onload = cargar;
+
+window.onload = () => {
+  registrarVisita();
+  cargar();
+};
 </script>
 
 </body>
