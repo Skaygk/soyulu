@@ -54,12 +54,6 @@ tbody tr:hover {
   background-color: #330033;
 }
 
-footer {
-  margin-top: 40px;
-  font-size: 0.9em;
-  opacity: 0.7;
-}
-
 .upload-btn {
   display: inline-block;
   margin: 20px auto;
@@ -76,6 +70,48 @@ footer {
   background: #9400D3;
   color: #fff;
 }
+
+button.ver-btn {
+  padding: 5px 10px;
+  background: #b84cff;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button.ver-btn:hover {
+  background: #e000ff;
+}
+
+#modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+
+#modal-contenido {
+  background-color: #000;
+  color: #b84cff;
+  margin: 10% auto;
+  padding: 20px;
+  border: 2px solid #9400D3;
+  width: 80%;
+  max-width: 600px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+#cerrar-modal {
+  float: right;
+  cursor: pointer;
+  font-weight: bold;
+  color: #ff00ff;
+}
 </style>
 </head>
 <body>
@@ -89,12 +125,22 @@ footer {
     <tr>
       <th>Titulo</th>
       <th>Autor</th>
-      <th>Contenido</th>
       <th>Usuario</th>
+      <th>Contenido</th>
     </tr>
   </thead>
   <tbody id="carpetas"></tbody>
 </table>
+
+<!-- Modal -->
+<div id="modal">
+  <div id="modal-contenido">
+    <span id="cerrar-modal">X</span>
+    <h2 id="modal-titulo"></h2>
+    <p id="modal-autor"></p>
+    <pre id="modal-texto"></pre>
+  </div>
+</div>
 
 <footer>© SIGMIZA</footer>
 
@@ -115,15 +161,30 @@ async function cargarCarpetas() {
       <tr>
         <td>${f.titulo}</td>
         <td>${f.autor}</td>
-        <td>${f.contenido}</td>
         <td>${f.subido_por}</td>
+        <td><button class="ver-btn" data-titulo="${f.titulo}" data-autor="${f.autor}" data-contenido="${f.contenido}">Ver</button></td>
       </tr>
     `).join('');
+    document.querySelectorAll('.ver-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('modal-titulo').textContent = btn.dataset.titulo;
+        document.getElementById('modal-autor').textContent = 'Autor: ' + btn.dataset.autor;
+        document.getElementById('modal-texto').textContent = btn.dataset.contenido;
+        document.getElementById('modal').style.display = 'block';
+      });
+    });
+
   } catch(e) {
     console.error(e);
     document.getElementById('carpetas').innerHTML = `<tr><td colspan="4">No se pudieron cargar las carpetas</td></tr>`;
   }
 }
+
+
+document.getElementById('cerrar-modal').addEventListener('click', () => {
+  document.getElementById('modal').style.display = 'none';
+});
+
 
 window.addEventListener('load', () => {
   registrarVisita();
