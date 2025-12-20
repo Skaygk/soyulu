@@ -12,25 +12,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: 'Metodo no permitido' });
   }
 
+  const auth = req.headers.authorization;
+  const { id } = req.body;
+
+  if (auth !== CONTRASENA_ADMIN) {
+    return res.status(401).json({ ok: false, error: 'Contraseña incorrecta, deja de intentar desface pendejo' });
+  }
+
+  if (!id) {
+    return res.status(400).json({ ok: false, error: 'Falta el id' });
+  }
+
   try {
-    const { id, contrasena } = req.body;
-
-    if (!contrasena || contrasena !== CONTRASENA_ADMIN) {
-      return res.status(401).json({ ok: false, error: 'Contrasena incorrecta' });
-    }
-
-    if (!id) {
-      return res.status(400).json({ ok: false, error: 'ID de carpeta requerido' });
-    }
-
     const { error } = await supabase
-      .from('carpetas')
+      .from('carpetas_usuarios')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
 
-    res.status(200).json({ ok: true, mensaje: 'Carpeta borrada correctamente' });
+    res.status(200).json({ ok: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, error: err.message });

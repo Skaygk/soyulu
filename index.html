@@ -16,6 +16,7 @@ body {
 }
 
 .logo-container {
+  text-align: center;
   margin: 20px 0;
 }
 
@@ -42,7 +43,6 @@ table {
 th, td {
   border: 2px solid #9400D3;
   padding: 10px;
-  text-align: center;
 }
 
 th {
@@ -85,6 +85,14 @@ button:hover {
   cursor: pointer;
   font-weight: bold;
 }
+
+.admin-pass-container {
+  margin: 20px 0;
+}
+.admin-pass-container input {
+  padding: 6px;
+  margin-right: 10px;
+}
 </style>
 </head>
 
@@ -95,14 +103,18 @@ button:hover {
 </div>
 
 <a href="upload.html">Subir carpeta</a>
-        
+
+<div class="admin-pass-container">
+  <input type="password" id="adminPass" placeholder="Contrasena admin">
+</div>
+
 <table>
 <thead>
 <tr>
   <th>Titulo</th>
   <th>Autor</th>
   <th>Usuario</th>
-  <th>Ver</th>
+  <th>Fecha</th>
   <th>Borrar</th>
 </tr>
 </thead>
@@ -138,42 +150,16 @@ async function cargar() {
     data.forEach(f => {
       const tr = document.createElement('tr');
 
-      const t1 = document.createElement('td');
-      t1.textContent = f.titulo;
-
-      const t2 = document.createElement('td');
-      t2.textContent = f.autor;
-
-      const t3 = document.createElement('td');
-      t3.textContent = f.subido_por;
-
-
-      const t4 = document.createElement('td');
-      const btnVer = document.createElement('button');
-      btnVer.textContent = 'Ver';
-      btnVer.onclick = () => abrirModal(f);
-      t4.appendChild(btnVer);
+      const t1 = document.createElement('td'); t1.textContent = f.titulo;
+      const t2 = document.createElement('td'); t2.textContent = f.autor;
+      const t3 = document.createElement('td'); t3.textContent = f.subido_por;
+      const t4 = document.createElement('td'); t4.textContent = new Date(f.created_at).toLocaleString();
 
       const t5 = document.createElement('td');
-      const btnBorrar = document.createElement('button');
-      btnBorrar.textContent = 'Borrar';
-      btnBorrar.onclick = async () => {
-        const contrasena = prompt('Ingresa la contrasena de administrador:');
-        if (!contrasena) return;
-        const res = await fetch('/api/borrarCarpeta', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: f.id, contrasena })
-        });
-        const r = await res.json();
-        if (r.ok) {
-          alert('Carpeta borrada');
-          cargar();
-        } else {
-          alert('Error: ' + r.error);
-        }
-      };
-      t5.appendChild(btnBorrar);
+      const btn = document.createElement('button');
+      btn.textContent = 'Borrar';
+      btn.onclick = () => borrarCarpeta(f.id);
+      t5.appendChild(btn);
 
       tr.append(t1, t2, t3, t4, t5);
       tbody.appendChild(tr);
@@ -193,6 +179,27 @@ function abrirModal(f) {
 document.getElementById('cerrar').onclick = () => {
   document.getElementById('modal').style.display = 'none';
 };
+
+async function borrarCarpeta(id) {
+  const pass = document.getElementById('adminPass').value.trim();
+  if (!pass) { alert('Ingresa la contraseña admin'); return; }
+
+  if (!confirm('Estas seguro de borrar este doxx?')) return;
+
+  const res = await fetch('/api/borrarCarpeta', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: pass },
+    body: JSON.stringify({ id })
+  });
+
+  const data = await res.json();
+  if (data.ok) {
+    alert('doxx borrado');
+    cargar();
+  } else {
+    alert('Error: ' + data.error);
+  }
+}
 
 window.onload = () => {
   registrarVisita();
