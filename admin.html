@@ -62,7 +62,6 @@
     background: #e000ff;
   }
 
-  /* Botón de borrar IPs */
   #deleteBtn {
     width: auto;
     padding: 10px 20px;
@@ -122,7 +121,7 @@
     <thead>
       <tr>
         <th>IP</th>
-        <th>País</th>
+        <th>Pais</th>
         <th>Ciudad</th>
         <th>Fecha</th>
       </tr>
@@ -132,6 +131,28 @@
 </div>
 
 <script>
+const SESION_TIEMPO = 20 * 60 * 1000;
+
+//la sesion
+function guardarSesion() {
+  localStorage.setItem('admin_sesion', JSON.stringify({
+    expira: Date.now() + SESION_TIEMPO
+  }));
+}
+
+function sesionValida() {
+  const s = localStorage.getItem('admin_sesion');
+  if (!s) return false;
+
+  const data = JSON.parse(s);
+  if (Date.now() > data.expira) {
+    localStorage.removeItem('admin_sesion');
+    return false;
+  }
+  return true;
+}
+
+//login
 async function loadData() {
   const pass = document.getElementById('pass').value.trim();
 
@@ -144,8 +165,11 @@ async function loadData() {
     return;
   }
 
-  const data = await res.json();
+  guardarSesion();
+  mostrarPanel(await res.json());
+}
 
+function mostrarPanel(data) {
   document.getElementById('data').innerHTML = data.map(v => `
     <tr>
       <td>${v.ip}</td>
@@ -159,6 +183,7 @@ async function loadData() {
   document.getElementById('panelDiv').style.display = 'block';
 }
 
+//borrado de ips
 document.getElementById('deleteBtn').addEventListener('click', async () => {
   if (!confirm('¿Estás seguro de borrar todas las IPs?')) return;
 
@@ -168,14 +193,28 @@ document.getElementById('deleteBtn').addEventListener('click', async () => {
     method: 'POST',
     headers: { Authorization: pass }
   });
-
   if (res.ok) {
-    alert('Todas las IPs han sido borradas');
+    alert('todo borrado');
     document.getElementById('data').innerHTML = '';
   } else {
-    alert('Error al borrar las IPs');
+    alert('Error al borrar checa eso porfa');
   }
 });
+
+//auto login
+window.onload = async () => {
+  if (!sesionValida()) return;
+
+  const res = await fetch('/api/admin', {
+    headers: { Authorization: '' }
+  });
+
+  if (res.ok) {
+    mostrarPanel(await res.json());
+  } else {
+    localStorage.removeItem('admin_sesion');
+  }
+};
 </script>
 
 </body>

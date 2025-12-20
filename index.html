@@ -15,14 +15,21 @@ body {
   padding: 20px;
 }
 
-h1 {
-  font-size: 3em;
-  animation: parpadeo 1.5s infinite;
+.logo-container {
+  text-align: center;
+  margin: 20px 0;
 }
 
-@keyframes parpadeo {
-  0%,100% { text-shadow: 0 0 5px #9400d3; }
-  50% { text-shadow: 0 0 20px #ff00ff; }
+.logo {
+  width: 50%;      
+  max-width: 300px;    
+  height: auto;       
+  animation: latido 1.8s infinite ease-in-out;
+}
+
+@keyframes latido {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); } 
 }
 
 table {
@@ -79,7 +86,10 @@ button {
 
 <body>
 
-<h1>SIGMIZA</h1>
+<div class="logo-container">
+  <img src="recursos/sigma.jpg" alt="SIGMIZA" class="logo">
+</div>
+
 <a href="upload.html">Subir carpeta</a>
 
 <table>
@@ -108,7 +118,7 @@ async function registrarVisita() {
   try {
     await fetch('/api/track', { method: 'POST' });
   } catch (err) {
-    console.error('Error al registrar visita', err);
+    console.error('', err);
   }
 }
 
@@ -146,7 +156,6 @@ async function cargar() {
   }
 }
 
-
 function abrirModal(f) {
   document.getElementById('m-titulo').textContent = f.titulo;
   document.getElementById('m-autor').textContent = 'Autor: ' + f.autor;
@@ -157,7 +166,6 @@ function abrirModal(f) {
 document.getElementById('cerrar').onclick = () => {
   document.getElementById('modal').style.display = 'none';
 };
-
 
 window.onload = () => {
   registrarVisita();
