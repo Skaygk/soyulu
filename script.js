@@ -1,4 +1,4 @@
 
-fetch('/api/track.js', {
+fetch('/api/track', {
   method: 'POST'
 });

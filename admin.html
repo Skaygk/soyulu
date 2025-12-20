@@ -116,7 +116,7 @@
 async function loadData() {
   const pass = document.getElementById('pass').value.trim();
 
-  const res = await fetch('/api/admin.js', {
+  const res = await fetch('/api/admin', {
     headers: {
       Authorization: pass
     }
