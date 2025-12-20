@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Subir Carpeta - SIGMIZA</title>
+<title>Subir Carpeta</title>
+
 <style>
 body {
   font-family: Arial;
@@ -11,95 +11,61 @@ body {
   color: #b84cff;
   text-align: center;
   padding: 20px;
-  margin: 0;
 }
 
-h1 {
-  margin-bottom: 30px;
-  font-size: 2.5em;
-  text-shadow: 0 0 5px #b84cff, 0 0 10px #b84cff;
-}
-
-input[type="text"],
-input[type="password"],
-textarea {
+input, textarea {
   width: 300px;
   padding: 10px;
-  margin: 5px 0;
+  margin: 5px;
   background: #000;
   border: 2px solid #b84cff;
   color: #b84cff;
-  outline: none;
-  font-size: 1em;
 }
-
-textarea { height: 150px; resize: vertical; }
-
-input::placeholder,
-textarea::placeholder { color: #7a2fc9; }
 
 button {
   padding: 10px 20px;
-  margin: 10px 0;
   background: #b84cff;
-  color: #000;
   border: none;
-  cursor: pointer;
   font-weight: bold;
-  font-size: 1em;
-  transition: background 0.2s ease;
+  cursor: pointer;
 }
-
-button:hover { background: #e000ff; }
 </style>
 </head>
+
 <body>
 
-<h1>Agregar Carpeta</h1>
+<h1>Subir carpeta</h1>
 
-<input type="text" id="titulo" placeholder="Titulo"><br>
-<input type="text" id="autor" placeholder="Autor"><br>
+<input id="titulo" placeholder="Titulo"><br>
+<input id="autor" placeholder="Autor"><br>
 <textarea id="contenido" placeholder="Contenido"></textarea><br>
-<input type="text" id="usuario" placeholder="Usuario"><br>
-<input type="password" id="contrasena" placeholder="Contraseña"><br>
-<button onclick="subirCarpeta()">Subir Carpeta</button>
+<input id="usuario" placeholder="Usuario"><br>
+<input type="password" id="contrasena" placeholder="Contrasena"><br>
+<button onclick="enviar()">Subir</button>
 
 <script>
-async function subirCarpeta() {
-  const titulo = document.getElementById('titulo').value.trim();
-  const autor = document.getElementById('autor').value.trim();
-  const contenido = document.getElementById('contenido').value.trim();
-  const usuario = document.getElementById('usuario').value.trim();
-  const contrasena = document.getElementById('contrasena').value.trim();
+async function enviar() {
+  const datos = {
+    titulo: titulo.value.trim(),
+    autor: autor.value.trim(),
+    contenido: contenido.value.trim(),
+    usuario: usuario.value.trim(),
+    contrasena: contrasena.value.trim()
+  };
 
-  if (!titulo || !autor || !contenido || !usuario || !contrasena) {
+  if (Object.values(datos).some(v => !v)) {
     alert('Todos los campos son obligatorios');
     return;
   }
 
-  try {
-    const res = await fetch('/api/agregarCarpeta', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ titulo, autor, contenido, usuario, contrasena })
-    });
+  const res = await fetch('/api/agregarCarpeta', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(datos)
+  });
 
-    const data = await res.json();
-
-    if (data.ok) {
-      alert('Carpeta subida con exito por ' + data.subido_por);
-      document.getElementById('titulo').value = '';
-      document.getElementById('autor').value = '';
-      document.getElementById('contenido').value = '';
-      document.getElementById('usuario').value = '';
-      document.getElementById('contrasena').value = '';
-    } else {
-      alert('Error: ' + data.error);
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Error al subir carpeta');
-  }
+  const r = await res.json();
+  alert(r.ok ? 'Subido correctamente' : r.error);
 }
 </script>
 

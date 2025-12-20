@@ -4,24 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIGMIZA</title>
+
 <style>
 body {
   font-family: Arial;
   background: #000;
   color: #9400D3;
   text-align: center;
-  padding: 20px;
   margin: 0;
+  padding: 20px;
 }
 
 h1 {
   font-size: 3em;
-  margin: 20px 0;
   animation: parpadeo 1.5s infinite;
 }
 
 @keyframes parpadeo {
-  0%, 100% { text-shadow: 0 0 5px #9400d3; }
+  0%,100% { text-shadow: 0 0 5px #9400d3; }
   50% { text-shadow: 0 0 20px #ff00ff; }
 }
 
@@ -30,166 +30,122 @@ table {
   max-width: 900px;
   margin: 30px auto;
   border-collapse: collapse;
-  font-size: 1em;
   color: #fff;
 }
 
 th, td {
   border: 2px solid #9400D3;
   padding: 10px;
-  text-align: left;
 }
 
 th {
-  background-color: #120012;
+  background: #120012;
   color: #b84cff;
-  text-align: center;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #1a001a;
-}
-
-tbody tr:hover {
-  background-color: #330033;
-}
-
-.upload-btn {
-  display: inline-block;
-  margin: 20px auto;
-  padding: 12px 25px;
-  border: 2px solid #9400D3;
-  border-radius: 8px;
-  color: #9400D3;
-  text-decoration: none;
-  font-size: 1.2em;
-  transition: 0.3s;
-}
-
-.upload-btn:hover {
-  background: #9400D3;
-  color: #fff;
-}
-
-button.ver-btn {
-  padding: 5px 10px;
+button {
+  padding: 6px 12px;
   background: #b84cff;
-  color: #000;
   border: none;
-  cursor: pointer;
   font-weight: bold;
-}
-
-button.ver-btn:hover {
-  background: #e000ff;
+  cursor: pointer;
 }
 
 #modal {
   display: none;
   position: fixed;
-  z-index: 10;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.8);
+  inset: 0;
+  background: rgba(0,0,0,0.8);
 }
 
-#modal-contenido {
-  background-color: #000;
+#modal-box {
+  background: #000;
   color: #b84cff;
-  margin: 10% auto;
-  padding: 20px;
   border: 2px solid #9400D3;
   width: 80%;
   max-width: 600px;
+  margin: 10% auto;
+  padding: 20px;
   text-align: left;
-  white-space: pre-wrap;
 }
 
-#cerrar-modal {
+#cerrar {
   float: right;
   cursor: pointer;
   font-weight: bold;
-  color: #ff00ff;
 }
 </style>
 </head>
+
 <body>
 
 <h1>SIGMIZA</h1>
-
-<a href="upload.html" class="upload-btn">Subir Carpeta</a>
+<a href="upload.html">Subir carpeta</a>
 
 <table>
-  <thead>
-    <tr>
-      <th>Titulo</th>
-      <th>Autor</th>
-      <th>Usuario</th>
-      <th>Contenido</th>
-    </tr>
-  </thead>
-  <tbody id="carpetas"></tbody>
+<thead>
+<tr>
+  <th>Titulo</th>
+  <th>Autor</th>
+  <th>Usuario</th>
+  <th>Ver</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
 </table>
 
-<!-- Modal -->
 <div id="modal">
-  <div id="modal-contenido">
-    <span id="cerrar-modal">X</span>
-    <h2 id="modal-titulo"></h2>
-    <p id="modal-autor"></p>
-    <pre id="modal-texto"></pre>
+  <div id="modal-box">
+    <span id="cerrar">X</span>
+    <h2 id="m-titulo"></h2>
+    <p id="m-autor"></p>
+    <pre id="m-contenido"></pre>
   </div>
 </div>
 
-<footer>© SIGMIZA</footer>
-
 <script>
-async function registrarVisita() {
-  try {
-    await fetch('/api/track', { method: 'POST' });
-  } catch(err) {
-    console.error('Error al registrar visita', err);
-  }
+async function cargar() {
+  const res = await fetch('/api/obtenerCarpetas');
+  const data = await res.json();
+
+  const tbody = document.getElementById('lista');
+  tbody.innerHTML = '';
+
+  data.forEach(f => {
+    const tr = document.createElement('tr');
+
+    const t1 = document.createElement('td');
+    t1.textContent = f.titulo;
+
+    const t2 = document.createElement('td');
+    t2.textContent = f.autor;
+
+    const t3 = document.createElement('td');
+    t3.textContent = f.subido_por;
+
+    const t4 = document.createElement('td');
+    const btn = document.createElement('button');
+    btn.textContent = 'Ver';
+    btn.onclick = () => abrirModal(f);
+    t4.appendChild(btn);
+
+    tr.append(t1, t2, t3, t4);
+    tbody.appendChild(tr);
+  });
 }
 
-async function cargarCarpetas() {
-  try {
-    const res = await fetch('/api/obtenerCarpetas');
-    const data = await res.json();
-    document.getElementById('carpetas').innerHTML = data.map(f => `
-      <tr>
-        <td>${f.titulo}</td>
-        <td>${f.autor}</td>
-        <td>${f.subido_por}</td>
-        <td><button class="ver-btn" data-titulo="${f.titulo}" data-autor="${f.autor}" data-contenido="${f.contenido}">Ver</button></td>
-      </tr>
-    `).join('');
-    document.querySelectorAll('.ver-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.getElementById('modal-titulo').textContent = btn.dataset.titulo;
-        document.getElementById('modal-autor').textContent = 'Autor: ' + btn.dataset.autor;
-        document.getElementById('modal-texto').textContent = btn.dataset.contenido;
-        document.getElementById('modal').style.display = 'block';
-      });
-    });
-
-  } catch(e) {
-    console.error(e);
-    document.getElementById('carpetas').innerHTML = `<tr><td colspan="4">No se pudieron cargar las carpetas</td></tr>`;
-  }
+function abrirModal(f) {
+  document.getElementById('m-titulo').textContent = f.titulo;
+  document.getElementById('m-autor').textContent = 'Autor: ' + f.autor;
+  document.getElementById('m-contenido').textContent = f.contenido;
+  document.getElementById('modal').style.display = 'block';
 }
 
-
-document.getElementById('cerrar-modal').addEventListener('click', () => {
+document.getElementById('cerrar').onclick = () => {
   document.getElementById('modal').style.display = 'none';
-});
+};
 
-
-window.addEventListener('load', () => {
-  registrarVisita();
-  cargarCarpetas();
-});
+window.onload = cargar;
 </script>
 
 </body>
