@@ -62,6 +62,23 @@
     background: #e000ff;
   }
 
+  /* Botón de borrar IPs */
+  #deleteBtn {
+    width: auto;
+    padding: 10px 20px;
+    margin-bottom: 15px;
+    background: #ff00aa;
+    color: #000;
+    border: 2px solid #b84cff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+  }
+
+  #deleteBtn:hover {
+    background: #ff33cc;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -85,6 +102,7 @@
     max-width: 900px;
     border: 2px solid #b84cff;
     padding: 20px;
+    text-align: center;
   }
 </style>
 </head>
@@ -99,6 +117,7 @@
 
 <div class="panel" id="panelDiv">
   <h1>PANEL DE VISITAS</h1>
+  <button id="deleteBtn">BORRAR TODAS LAS IPs</button>
   <table>
     <thead>
       <tr>
@@ -117,9 +136,7 @@ async function loadData() {
   const pass = document.getElementById('pass').value.trim();
 
   const res = await fetch('/api/admin', {
-    headers: {
-      Authorization: pass
-    }
+    headers: { Authorization: pass }
   });
 
   if (!res.ok) {
@@ -141,6 +158,24 @@ async function loadData() {
   document.getElementById('loginDiv').style.display = 'none';
   document.getElementById('panelDiv').style.display = 'block';
 }
+
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (!confirm('¿Estás seguro de borrar todas las IPs?')) return;
+
+  const pass = document.getElementById('pass').value.trim();
+
+  const res = await fetch('/api/delete', {
+    method: 'POST',
+    headers: { Authorization: pass }
+  });
+
+  if (res.ok) {
+    alert('Todas las IPs han sido borradas');
+    document.getElementById('data').innerHTML = '';
+  } else {
+    alert('Error al borrar las IPs');
+  }
+});
 </script>
 
 </body>
