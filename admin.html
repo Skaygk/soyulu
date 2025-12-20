@@ -1,81 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Visitas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #9400D3;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 { font-size: 2.5em; margin-bottom: 20px; }
-    input[type="password"], button {
-      padding: 10px; margin: 5px; border-radius: 5px; border: none; font-size: 1em;
-    }
-    button { background: #9400D3; color: #fff; cursor: pointer; }
-    button:hover { background: #ff00ff; }
-    table { width: 90%; margin: 20px auto; border-collapse: collapse; color: #9400D3; }
-    th, td { border: 1px solid #9400D3; padding: 8px; text-align: center; }
-    th { background-color: #111; }
-    @media (max-width: 600px) { th, td { font-size: 0.9em; padding: 6px; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    background: #000;
+    color: #b84cff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .card {
+    width: 360px;
+    border: 2px solid #b84cff;
+    padding: 30px;
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 25px;
+    letter-spacing: 2px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #000;
+    border: 2px solid #b84cff;
+    color: #b84cff;
+    outline: none;
+  }
+
+  input::placeholder {
+    color: #7a2fc9;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background: #b84cff;
+    border: none;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #e000ff;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  th, td {
+    border: 1px solid #b84cff;
+    padding: 8px;
+    text-align: center;
+  }
+
+  th {
+    background: #120012;
+  }
+
+  .panel {
+    display: none;
+    width: 90vw;
+    max-width: 900px;
+    border: 2px solid #b84cff;
+    padding: 20px;
+  }
+</style>
 </head>
+
 <body>
-  <h1>Panel de Visitas</h1>
 
-  <div id="loginDiv">
-    <input type="password" id="pass" placeholder="Contraseña">
-    <button onclick="loadData()">Entrar</button>
-  </div>
+<div class="card" id="loginDiv">
+  <h1>ADMIN</h1>
+  <input type="password" id="pass" placeholder="Contraseña">
+  <button onclick="loadData()">ENTRAR</button>
+</div>
 
-  <div id="panelDiv" style="display:none;">
-    <table>
-      <thead>
-        <tr>
-          <th>IP</th>
-          <th>País</th>
-          <th>Ciudad</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody id="data"></tbody>
-    </table>
-  </div>
+<div class="panel" id="panelDiv">
+  <h1>PANEL DE VISITAS</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>IP</th>
+        <th>País</th>
+        <th>Ciudad</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody id="data"></tbody>
+  </table>
+</div>
 
-  <script>
-    async function loadData() {
-      const pass = document.getElementById('pass').value.trim(); // elimina espacios al inicio y final
-      try {
-        const res = await fetch('/api/admin', { headers: { authorization: pass } });
+<script>
+async function loadData() {
+  const pass = document.getElementById('pass').value.trim();
 
-        if (!res.ok) {
-          alert('Contraseña incorrecta. Verifica mayúsculas, minúsculas y que no haya espacios.');
-          return;
-        }
-
-        const data = await res.json();
-        document.getElementById('data').innerHTML =
-          data.map(v => `
-            <tr>
-              <td>${v.ip}</td>
-              <td>${v.country}</td>
-              <td>${v.city}</td>
-              <td>${new Date(v.created_at).toLocaleString()}</td>
-            </tr>
-          `).join('');
-
-        document.getElementById('loginDiv').style.display = 'none';
-        document.getElementById('panelDiv').style.display = 'block';
-
-      } catch (err) {
-        console.error(err);
-        alert('Error al cargar los datos. Revisa la conexión o el backend.');
-      }
+  const res = await fetch('/api/admin.js', {
+    headers: {
+      Authorization: pass
     }
-  </script>
+  });
+
+  if (!res.ok) {
+    alert('Contraseña incorrecta');
+    return;
+  }
+
+  const data = await res.json();
+
+  document.getElementById('data').innerHTML = data.map(v => `
+    <tr>
+      <td>${v.ip}</td>
+      <td>${v.country}</td>
+      <td>${v.city}</td>
+      <td>${new Date(v.created_at).toLocaleString()}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('loginDiv').style.display = 'none';
+  document.getElementById('panelDiv').style.display = 'block';
+}
+</script>
+
 </body>
 </html>
