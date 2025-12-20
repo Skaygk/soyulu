@@ -6,12 +6,13 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
-
-  if (req.method !== 'POST') {
-    return res.status(200).end();
+ 
+  if (req.method === 'GET') {
+    return res.status(200).json({ ok: true });
   }
 
-  try {
+
+  if (req.method === 'POST') {
     const ip =
       req.headers['x-forwarded-for']?.split(',')[0] ||
       req.socket.remoteAddress ||
@@ -23,7 +24,8 @@ export default async function handler(req, res) {
     await supabase.from('visits').insert([{ ip, country, city }]);
 
     return res.status(200).json({ ok: true });
-  } catch (e) {
-    return res.status(500).json({ error: 'track failed' });
   }
+
+  
+  return res.status(200).end();
 }
