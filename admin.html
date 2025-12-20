@@ -12,45 +12,16 @@
       text-align: center;
       padding: 20px;
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
+    h1 { font-size: 2.5em; margin-bottom: 20px; }
     input[type="password"], button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
-      font-size: 1em;
+      padding: 10px; margin: 5px; border-radius: 5px; border: none; font-size: 1em;
     }
-    button {
-      background: #9400D3;
-      color: #fff;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ff00ff;
-    }
-    table {
-      width: 90%;
-      margin: 20px auto;
-      border-collapse: collapse;
-      color: #9400D3;
-    }
-    th, td {
-      border: 1px solid #9400D3;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #111;
-    }
-    @media (max-width: 600px) {
-      th, td {
-        font-size: 0.9em;
-        padding: 6px;
-      }
-    }
+    button { background: #9400D3; color: #fff; cursor: pointer; }
+    button:hover { background: #ff00ff; }
+    table { width: 90%; margin: 20px auto; border-collapse: collapse; color: #9400D3; }
+    th, td { border: 1px solid #9400D3; padding: 8px; text-align: center; }
+    th { background-color: #111; }
+    @media (max-width: 600px) { th, td { font-size: 0.9em; padding: 6px; } }
   </style>
 </head>
 <body>
@@ -77,10 +48,14 @@
 
   <script>
     async function loadData() {
-      const pass = document.getElementById('pass').value;
+      const pass = document.getElementById('pass').value.trim(); // elimina espacios al inicio y final
       try {
         const res = await fetch('/api/admin', { headers: { authorization: pass } });
-        if (!res.ok) return alert('Contraseña incorrecta');
+
+        if (!res.ok) {
+          alert('Contraseña incorrecta. Verifica mayúsculas, minúsculas y que no haya espacios.');
+          return;
+        }
 
         const data = await res.json();
         document.getElementById('data').innerHTML =
@@ -93,13 +68,12 @@
             </tr>
           `).join('');
 
-        
         document.getElementById('loginDiv').style.display = 'none';
         document.getElementById('panelDiv').style.display = 'block';
 
       } catch (err) {
         console.error(err);
-        alert('Error al cargar los datos');
+        alert('Error al cargar los datos. Revisa la conexión o el backend.');
       }
     }
   </script>
