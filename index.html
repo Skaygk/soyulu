@@ -16,20 +16,19 @@ body {
 }
 
 .logo-container {
-  text-align: center;
   margin: 20px 0;
 }
 
 .logo {
-  width: 50%;      
-  max-width: 300px;    
-  height: auto;       
+  width: 50%;
+  max-width: 300px;
+  height: auto;
   animation: latido 1.8s infinite ease-in-out;
 }
 
 @keyframes latido {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); } 
+  50% { transform: scale(1.15); }
 }
 
 table {
@@ -43,6 +42,7 @@ table {
 th, td {
   border: 2px solid #9400D3;
   padding: 10px;
+  text-align: center;
 }
 
 th {
@@ -56,6 +56,10 @@ button {
   border: none;
   font-weight: bold;
   cursor: pointer;
+}
+
+button:hover {
+  background: #e000ff;
 }
 
 #modal {
@@ -91,7 +95,7 @@ button {
 </div>
 
 <a href="upload.html">Subir carpeta</a>
-
+        
 <table>
 <thead>
 <tr>
@@ -99,6 +103,7 @@ button {
   <th>Autor</th>
   <th>Usuario</th>
   <th>Ver</th>
+  <th>Borrar</th>
 </tr>
 </thead>
 <tbody id="lista"></tbody>
@@ -142,13 +147,35 @@ async function cargar() {
       const t3 = document.createElement('td');
       t3.textContent = f.subido_por;
 
-      const t4 = document.createElement('td');
-      const btn = document.createElement('button');
-      btn.textContent = 'Ver';
-      btn.onclick = () => abrirModal(f);
-      t4.appendChild(btn);
 
-      tr.append(t1, t2, t3, t4);
+      const t4 = document.createElement('td');
+      const btnVer = document.createElement('button');
+      btnVer.textContent = 'Ver';
+      btnVer.onclick = () => abrirModal(f);
+      t4.appendChild(btnVer);
+
+      const t5 = document.createElement('td');
+      const btnBorrar = document.createElement('button');
+      btnBorrar.textContent = 'Borrar';
+      btnBorrar.onclick = async () => {
+        const contrasena = prompt('Ingresa la contrasena de administrador:');
+        if (!contrasena) return;
+        const res = await fetch('/api/borrarCarpeta', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: f.id, contrasena })
+        });
+        const r = await res.json();
+        if (r.ok) {
+          alert('Carpeta borrada');
+          cargar();
+        } else {
+          alert('Error: ' + r.error);
+        }
+      };
+      t5.appendChild(btnBorrar);
+
+      tr.append(t1, t2, t3, t4, t5);
       tbody.appendChild(tr);
     });
   } catch (e) {
