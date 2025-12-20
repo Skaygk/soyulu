@@ -12,7 +12,7 @@ function limpiarEntrada(texto) {
   return texto
     .replace(/<script.*?>.*?<\/script>/gi, '')
     .replace(/<\/?[^>]+(>|$)/g, '')
-    .slice(0, 10000000);
+    .slice(0, 10000);
 }
 
 export default async function handler(req, res) {
