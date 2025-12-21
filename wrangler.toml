@@ -1,15 +1,15 @@
 name = "sigmiza-upload"
-main = "api/uploadFile.js"
 compatibility_date = "2025-12-21"
+main = "api/uploadFile.js"
+
+[[r2_buckets]]
+binding = "MI_BUCKET"
+bucket_name = "uploads"
+preview_bucket_name = "uploads"
 
 [vars]
-R2_BUCKET_2 = ""       
-CF_ACCOUNT_ID_2 = ""
-R2_ACCESS_KEY_ID_2 = ""
-R2_SECRET_ACCESS_KEY_2 = ""
+R2_ACCESS_KEY_ID = ""
+R2_SECRET_ACCESS_KEY = ""
+CF_ACCOUNT_ID = ""
 
 [env.production]
-R2_BUCKET_2 = ""
-CF_ACCOUNT_ID_2 = ""
-R2_ACCESS_KEY_ID_2 = ""
-R2_SECRET_ACCESS_KEY_2 = ""
