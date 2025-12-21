@@ -1,0 +1,15 @@
+name = "sigmiza-upload"
+main = "api/uploadFile.js"
+compatibility_date = "2025-12-21"
+
+[vars]
+R2_BUCKET_2 = ""       
+CF_ACCOUNT_ID_2 = ""
+R2_ACCESS_KEY_ID_2 = ""
+R2_SECRET_ACCESS_KEY_2 = ""
+
+[env.production]
+R2_BUCKET_2 = ""
+CF_ACCOUNT_ID_2 = ""
+R2_ACCESS_KEY_ID_2 = ""
+R2_SECRET_ACCESS_KEY_2 = ""

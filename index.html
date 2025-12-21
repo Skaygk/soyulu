@@ -8,7 +8,7 @@
 <style>
 
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #000;
   color: #9400D3;
   text-align: center;
@@ -16,21 +16,21 @@ body {
   padding: 15px;
 }
 
-
 .logo-container {
   margin: 15px 0;
 }
+
 .logo {
   width: 60%;
   max-width: 280px;
   height: auto;
   animation: latido 1.8s infinite ease-in-out;
 }
+
 @keyframes latido {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.12); }
 }
-
 
 a {
   display: inline-block;
@@ -44,6 +44,7 @@ a {
 .table-wrapper {
   overflow-x: auto;
 }
+
 table {
   width: 100%;
   min-width: 700px;
@@ -52,15 +53,16 @@ table {
   border-collapse: collapse;
   color: #fff;
 }
+
 th, td {
   border: 2px solid #9400D3;
   padding: 10px;
 }
+
 th {
   background: #120012;
   color: #b84cff;
 }
-
 
 button {
   padding: 8px 14px;
@@ -69,21 +71,23 @@ button {
   font-weight: bold;
   cursor: pointer;
 }
+
 button.borrar {
   background: #ff00aa;
   color: #000;
 }
+
 button.borrar:hover {
   background: #ff33cc;
 }
 
-/* Modal */
 #modal {
   display: none;
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.85);
 }
+
 #modal-box {
   background: #000;
   color: #b84cff;
@@ -94,21 +98,23 @@ button.borrar:hover {
   padding: 20px;
   text-align: left;
 }
+
 #cerrar {
   float: right;
   cursor: pointer;
   font-weight: bold;
 }
 
-
 .upload-container {
   margin: 20px auto;
   max-width: 400px;
 }
+
 #fileInput {
   width: 100%;
   margin-bottom: 10px;
 }
+
 #uploadBtn {
   width: 100%;
   padding: 10px;
@@ -118,9 +124,11 @@ button.borrar:hover {
   font-weight: bold;
   cursor: pointer;
 }
+
 #uploadBtn:hover {
   background: #6bdc6b;
 }
+
 #uploadStatus a {
   color: #4caf50;
   word-break: break-all;
@@ -138,11 +146,11 @@ button.borrar:hover {
 
 <body>
 
+
 <div class="logo-container">
   <img src="recursos/sigma.jpg" alt="SIGMIZA" class="logo">
 </div>
 
-<a href="upload.html">Subir carpeta</a>
 
 <div class="upload-container">
   <input type="file" id="fileInput" accept="image/*,video/*">
@@ -151,21 +159,22 @@ button.borrar:hover {
 </div>
 
 <div class="table-wrapper">
-<table>
-<thead>
-<tr>
-  <th>Titulo</th>
-  <th>Autor</th>
-  <th>Usuario</th>
-  <th>Contenido</th>
-  <th>Fecha</th>
-  <th>Ver</th>
-  <th>Borrar</th>
-</tr>
-</thead>
-<tbody id="lista"></tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Titulo</th>
+        <th>Autor</th>
+        <th>Usuario</th>
+        <th>Contenido</th>
+        <th>Fecha</th>
+        <th>Ver</th>
+        <th>Borrar</th>
+      </tr>
+    </thead>
+    <tbody id="lista"></tbody>
+  </table>
 </div>
+
 
 <div id="modal">
   <div id="modal-box">
@@ -185,71 +194,7 @@ const mAutor = document.getElementById('m-autor');
 const mContenido = document.getElementById('m-contenido');
 const mFecha = document.getElementById('m-fecha');
 
-async function registrarVisita() {
-  try { await fetch('/api/track', { method: 'POST' }); } catch {}
-}
-
-async function cargarCarpetas() {
-  const res = await fetch('/api/obtenerCarpetas');
-  const data = await res.json();
-  const tbody = document.getElementById('lista');
-  tbody.innerHTML = '';
-
-  data.forEach(f => {
-    const tr = document.createElement('tr');
-
-    const c = txt => { const td = document.createElement('td'); td.textContent = txt; return td; };
-
-    tr.append(
-      c(f.titulo),
-      c(f.autor),
-      c(f.subido_por),
-      c(f.contenido.length>50?f.contenido.slice(0,50)+'...':f.contenido),
-      c(f.created_at?new Date(f.created_at).toLocaleString():'Sin fecha')
-    );
-
-    const tdVer = document.createElement('td');
-    const btnVer = document.createElement('button');
-    btnVer.textContent = 'Ver';
-    btnVer.onclick = ()=>abrirModal(f);
-    tdVer.appendChild(btnVer);
-
-    const tdBorrar = document.createElement('td');
-    const btnBorrar = document.createElement('button');
-    btnBorrar.textContent='Borrar';
-    btnBorrar.className='borrar';
-    btnBorrar.onclick = ()=>borrarCarpeta(f.id);
-    tdBorrar.appendChild(btnBorrar);
-
-    tr.append(tdVer, tdBorrar);
-    tbody.appendChild(tr);
-  });
-}
-
-function abrirModal(f){
-  mTitulo.textContent=f.titulo;
-  mAutor.textContent='Autor: '+f.autor;
-  mContenido.textContent=f.contenido;
-  mFecha.textContent=f.created_at?new Date(f.created_at).toLocaleString():''; 
-  modal.style.display='block';
-}
-
-cerrar.onclick=()=>modal.style.display='none';
-
-async function borrarCarpeta(id){
-  const password=prompt('Contraseña admin:');
-  if(!password) return;
-
-  const res=await fetch('/api/borrarCarpeta',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({id,password})
-  });
-
-  const r=await res.json();
-  if(r.ok) cargarCarpetas();
-  else alert(r.error);
-}
+cerrar.onclick = () => modal.style.display = 'none';
 
 
 const uploadBtn = document.getElementById('uploadBtn');
@@ -258,10 +203,10 @@ const uploadStatus = document.getElementById('uploadStatus');
 
 uploadBtn.onclick = async () => {
   const file = fileInput.files[0];
-  if(!file) { uploadStatus.textContent='Selecciona un archivo'; return; }
-  if(file.size > 10*1024*1024) { uploadStatus.textContent='El archivo supera 10MB'; return; }
+  if(!file) { uploadStatus.textContent = 'Selecciona un archivo'; return; }
+  if(file.size > 10 * 1024 * 1024) { uploadStatus.textContent = 'Archivo supera 10MB'; return; }
 
-  uploadStatus.textContent='Subiendo...';
+  uploadStatus.textContent = 'Subiendo...';
 
   const formData = new FormData();
   formData.append('file', file);
@@ -269,26 +214,18 @@ uploadBtn.onclick = async () => {
   try {
     const res = await fetch('/api/uploadFile', { method: 'POST', body: formData });
     const data = await res.json();
-    if(data.ok){
-      uploadStatus.innerHTML=`Archivo subido: <a href="${data.url}" target="_blank">${data.url}</a>`;
+    if(data.ok) {
+      uploadStatus.innerHTML = `Archivo subido: <a href="${data.url}" target="_blank">${data.url}</a>`;
       fileInput.value = '';
     } else {
       uploadStatus.textContent = 'Error al subir: ' + data.error;
     }
-  } catch(e){
-    uploadStatus.textContent='Error al subir';
+  } catch(e) {
+    uploadStatus.textContent = 'Error al subir';
     console.error(e);
   }
 };
-
-window.onload = () => {
-  registrarVisita();
-  cargarCarpetas();
-};
 </script>
-
-<script defer src="/_vercel/analytics/script.js"></script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
 
 </body>
 </html>
