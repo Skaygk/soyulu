@@ -6,103 +6,108 @@
 <title>Admin Panel</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
-  body {
-    background: #000;
-    color: #b84cff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-  }
 
-  .card {
-    width: 360px;
-    border: 2px solid #b84cff;
-    padding: 30px;
-    text-align: center;
-  }
+body {
+  background: #000;
+  color: #b84cff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-  h1 {
-    margin-bottom: 25px;
-    letter-spacing: 2px;
-  }
 
-  input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    background: #000;
-    border: 2px solid #b84cff;
-    color: #b84cff;
-    outline: none;
-  }
+.card {
+  width: 360px;
+  border: 2px solid #b84cff;
+  padding: 30px;
+  text-align: center;
+}
 
-  input::placeholder {
-    color: #7a2fc9;
-  }
 
-  button {
-    width: 100%;
-    padding: 12px;
-    background: #b84cff;
-    border: none;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-  }
+h1 {
+  margin-bottom: 25px;
+  letter-spacing: 2px;
+}
 
-  button:hover {
-    background: #e000ff;
-  }
 
-  #deleteBtn {
-    width: auto;
-    padding: 10px 20px;
-    margin-bottom: 15px;
-    background: #ff00aa;
-    color: #000;
-    border: 2px solid #b84cff;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-  }
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  background: #000;
+  border: 2px solid #b84cff;
+  color: #b84cff;
+  outline: none;
+}
 
-  #deleteBtn:hover {
-    background: #ff33cc;
-  }
+input::placeholder {
+  color: #7a2fc9;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 14px;
-  }
 
-  th, td {
-    border: 1px solid #b84cff;
-    padding: 8px;
-    text-align: center;
-  }
+button {
+  width: 100%;
+  padding: 12px;
+  background: #b84cff;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
 
-  th {
-    background: #120012;
-  }
+button:hover {
+  background: #e000ff;
+}
 
-  .panel {
-    display: none;
-    width: 90vw;
-    max-width: 900px;
-    border: 2px solid #b84cff;
-    padding: 20px;
-    text-align: center;
-  }
+#deleteBtn {
+  width: auto;
+  padding: 10px 20px;
+  margin-bottom: 15px;
+  background: #ff00aa;
+  color: #000;
+  border: 2px solid #b84cff;
+  cursor: pointer;
+}
+
+#deleteBtn:hover {
+  background: #ff33cc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+th, td {
+  border: 1px solid #b84cff;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background: #120012;
+}
+
+
+.panel {
+  display: none;
+  width: 90vw;
+  max-width: 900px;
+  border: 2px solid #b84cff;
+  padding: 20px;
+  text-align: center;
+}
 </style>
 </head>
 
@@ -111,7 +116,7 @@
 <div class="card" id="loginDiv">
   <h1>ADMIN</h1>
   <input type="password" id="pass" placeholder="Contraseña">
-  <button onclick="loadData()">ENTRAR</button>
+  <button onclick="login()">ENTRAR</button>
 </div>
 
 <div class="panel" id="panelDiv">
@@ -131,11 +136,11 @@
 </div>
 
 <script>
-const SESION_TIEMPO = 20 * 60 * 1000;
+const SESION_TIEMPO = 20 * 60 * 1000; 
 
-//la sesion
-function guardarSesion() {
+function guardarSesion(pass) {
   localStorage.setItem('admin_sesion', JSON.stringify({
+    pass: pass,
     expira: Date.now() + SESION_TIEMPO
   }));
 }
@@ -143,7 +148,6 @@ function guardarSesion() {
 function sesionValida() {
   const s = localStorage.getItem('admin_sesion');
   if (!s) return false;
-
   const data = JSON.parse(s);
   if (Date.now() > data.expira) {
     localStorage.removeItem('admin_sesion');
@@ -152,21 +156,28 @@ function sesionValida() {
   return true;
 }
 
-//login
-async function loadData() {
+function obtenerPassSesion() {
+  const s = localStorage.getItem('admin_sesion');
+  if (!s) return null;
+  const data = JSON.parse(s);
+  data.expira = Date.now() + SESION_TIEMPO;
+  localStorage.setItem('admin_sesion', JSON.stringify(data));
+  return data.pass;
+}
+
+async function login() {
   const pass = document.getElementById('pass').value.trim();
+  if (!pass) return alert('Ingrese contraseña');
 
-  const res = await fetch('/api/admin', {
-    headers: { Authorization: pass }
-  });
-
-  if (!res.ok) {
-    alert('Contraseña incorrecta');
-    return;
+  try {
+    const res = await fetch('/api/admin', { headers: { Authorization: pass } });
+    if (!res.ok) return alert('Contraseña incorrecta, deja de joder');
+    guardarSesion(pass);
+    mostrarPanel(await res.json());
+  } catch(e) {
+    console.error(e);
+    alert('Error en el login');
   }
-
-  guardarSesion();
-  mostrarPanel(await res.json());
 }
 
 function mostrarPanel(data) {
@@ -178,40 +189,41 @@ function mostrarPanel(data) {
       <td>${new Date(v.created_at).toLocaleString()}</td>
     </tr>
   `).join('');
-
   document.getElementById('loginDiv').style.display = 'none';
   document.getElementById('panelDiv').style.display = 'block';
 }
 
-//borrado de ips
 document.getElementById('deleteBtn').addEventListener('click', async () => {
-  if (!confirm('¿Estás seguro de borrar todas las IPs?')) return;
+  if (!confirm('¿Seguro de borrar todas las IPs?')) return;
+  const pass = obtenerPassSesion();
+  if (!pass) return alert('Sesión expirada, ingrese contraseña');
 
-  const pass = document.getElementById('pass').value.trim();
-
-  const res = await fetch('/api/delete', {
-    method: 'POST',
-    headers: { Authorization: pass }
-  });
-  if (res.ok) {
-    alert('todo borrado');
-    document.getElementById('data').innerHTML = '';
-  } else {
-    alert('Error al borrar checa eso porfa');
+  try {
+    const res = await fetch('/api/delete', { method: 'POST', headers: { Authorization: pass } });
+    if (res.ok) {
+      alert('borradas');
+      document.getElementById('data').innerHTML = '';
+    } else {
+      alert('Error al borrar');
+    }
+  } catch(e) {
+    console.error(e);
+    alert('Error al borrar');
   }
 });
 
-//auto login
 window.onload = async () => {
   if (!sesionValida()) return;
 
-  const res = await fetch('/api/admin', {
-    headers: { Authorization: '' }
-  });
+  const pass = obtenerPassSesion();
+  if (!pass) return;
 
-  if (res.ok) {
-    mostrarPanel(await res.json());
-  } else {
+  try {
+    const res = await fetch('/api/admin', { headers: { Authorization: pass } });
+    if (res.ok) mostrarPanel(await res.json());
+    else localStorage.removeItem('admin_sesion');
+  } catch(e) {
+    console.error(e);
     localStorage.removeItem('admin_sesion');
   }
 };
