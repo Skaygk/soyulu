@@ -7,7 +7,6 @@
 <title>SIGMIZA</title>
 
 <style>
-  
 body {
   font-family: Arial;
   background: #000;
@@ -220,7 +219,6 @@ async function borrarCarpeta(id) {
   if (!password) return;
 
   const res = await fetch('/api/borrarCarpeta', {
-    
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ id, password })
@@ -236,6 +234,9 @@ window.onload = () => {
   cargarCarpetas();
 };
 </script>
+
+<script defer src="/_vercel/analytics/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 
 </body>
 </html>
