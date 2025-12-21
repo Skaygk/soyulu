@@ -21,21 +21,21 @@ body {
 }
 
 .logo {
-  width: 50%;
-  max-width: 300px;
-  height: auto;
+  width: 50%;      
+  max-width: 300px;    
+  height: auto;       
   animation: latido 1.8s infinite ease-in-out;
 }
 
 @keyframes latido {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.15); } 
 }
 
 table {
   width: 90%;
   max-width: 900px;
-  margin: 30px auto;
+  margin: 20px auto;
   border-collapse: collapse;
   color: #fff;
 }
@@ -58,8 +58,13 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #e000ff;
+button.borrar {
+  background: #ff00aa;
+  color: #000;
+}
+
+button.borrar:hover {
+  background: #ff33cc;
 }
 
 #modal {
@@ -85,14 +90,6 @@ button:hover {
   cursor: pointer;
   font-weight: bold;
 }
-
-.admin-pass-container {
-  margin: 20px 0;
-}
-.admin-pass-container input {
-  padding: 6px;
-  margin-right: 10px;
-}
 </style>
 </head>
 
@@ -104,17 +101,15 @@ button:hover {
 
 <a href="upload.html">Subir carpeta</a>
 
-<div class="admin-pass-container">
-  <input type="password" id="adminPass" placeholder="Contrasena admin">
-</div>
-
 <table>
 <thead>
 <tr>
   <th>Titulo</th>
   <th>Autor</th>
   <th>Usuario</th>
+  <th>Contenido</th>
   <th>Fecha</th>
+  <th>Ver</th>
   <th>Borrar</th>
 </tr>
 </thead>
@@ -127,6 +122,7 @@ button:hover {
     <h2 id="m-titulo"></h2>
     <p id="m-autor"></p>
     <pre id="m-contenido"></pre>
+    <p id="m-fecha"></p>
   </div>
 </div>
 
@@ -135,15 +131,14 @@ async function registrarVisita() {
   try {
     await fetch('/api/track', { method: 'POST' });
   } catch (err) {
-    console.error('', err);
+    console.error('Error al registrar visita', err);
   }
 }
 
-async function cargar() {
+async function cargarCarpetas() {
   try {
     const res = await fetch('/api/obtenerCarpetas');
     const data = await res.json();
-
     const tbody = document.getElementById('lista');
     tbody.innerHTML = '';
 
@@ -153,18 +148,27 @@ async function cargar() {
       const t1 = document.createElement('td'); t1.textContent = f.titulo;
       const t2 = document.createElement('td'); t2.textContent = f.autor;
       const t3 = document.createElement('td'); t3.textContent = f.subido_por;
-      const t4 = document.createElement('td'); t4.textContent = new Date(f.created_at).toLocaleString();
+      const t4 = document.createElement('td'); t4.textContent = f.contenido.length > 50 ? f.contenido.slice(0,50)+'...' : f.contenido;
+      const t5 = document.createElement('td'); t5.textContent = f.created_at ? new Date(f.created_at).toLocaleString() : 'Sin fecha';
 
-      const t5 = document.createElement('td');
-      const btn = document.createElement('button');
-      btn.textContent = 'Borrar';
-      btn.onclick = () => borrarCarpeta(f.id);
-      t5.appendChild(btn);
+    
+      const t6 = document.createElement('td');
+      const btnVer = document.createElement('button');
+      btnVer.textContent = 'Ver';
+      btnVer.onclick = () => abrirModal(f);
+      t6.appendChild(btnVer);
 
-      tr.append(t1, t2, t3, t4, t5);
+      const t7 = document.createElement('td');
+      const btnBorrar = document.createElement('button');
+      btnBorrar.textContent = 'Borrar';
+      btnBorrar.className = 'borrar';
+      btnBorrar.onclick = () => borrarCarpeta(f.id);
+      t7.appendChild(btnBorrar);
+
+      tr.append(t1,t2,t3,t4,t5,t6,t7);
       tbody.appendChild(tr);
     });
-  } catch (e) {
+  } catch(e) {
     console.error(e);
   }
 }
@@ -173,6 +177,7 @@ function abrirModal(f) {
   document.getElementById('m-titulo').textContent = f.titulo;
   document.getElementById('m-autor').textContent = 'Autor: ' + f.autor;
   document.getElementById('m-contenido').textContent = f.contenido;
+  document.getElementById('m-fecha').textContent = f.created_at ? 'Fecha: '+new Date(f.created_at).toLocaleString() : '';
   document.getElementById('modal').style.display = 'block';
 }
 
@@ -181,29 +186,31 @@ document.getElementById('cerrar').onclick = () => {
 };
 
 async function borrarCarpeta(id) {
-  const pass = document.getElementById('adminPass').value.trim();
-  if (!pass) { alert('Ingresa la contraseña admin'); return; }
+  const password = prompt('Ingrese la contraseña de admin para borrar este doxx:');
+  if(!password) return;
 
-  if (!confirm('Estas seguro de borrar este doxx?')) return;
-
-  const res = await fetch('/api/borrarCarpeta', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: pass },
-    body: JSON.stringify({ id })
-  });
-
-  const data = await res.json();
-  if (data.ok) {
-    alert('doxx borrado');
-    cargar();
-  } else {
-    alert('Error: ' + data.error);
+  try {
+    const res = await fetch('/api/borrarCarpeta', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id, password })
+    });
+    const r = await res.json();
+    if(r.ok) {
+      alert('doxx borrado');
+      cargarCarpetas();
+    } else {
+      alert('Error: '+r.error);
+    }
+  } catch(e) {
+    console.error(e);
+    alert('no se pudo');
   }
 }
 
 window.onload = () => {
   registrarVisita();
-  cargar();
+  cargarCarpetas();
 };
 </script>
 
