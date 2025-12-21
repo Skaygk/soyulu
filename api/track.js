@@ -7,30 +7,21 @@ const supabase = createClient(
 
 const BOT_KEYWORDS = [
   'bot','spider','crawl','slurp','fetch',
-  'facebook','telegram','discord','whatsapp',
-  'linkedin','pingdom','preview','headless'
+  'facebook','linkedin','telegram','whatsapp',
+  'discord','pingdom'
 ];
 
-function isBot(req) {
-  const ua = (req.headers['user-agent'] || '').toLowerCase();
-  const accept = req.headers['accept'] || '';
-
-  if (!ua) return true;
-
-  if (BOT_KEYWORDS.some(k => ua.includes(k))) {
-    return true;
-  }
-
-  if (!accept.includes('text/html')) {
-    return true;
-  }
-
-  return false;
+function isBot(userAgent) {
+  if (!userAgent) return true;
+  const ua = userAgent.toLowerCase();
+  return BOT_KEYWORDS.some(k => ua.includes(k));
 }
 
 export default async function handler(req, res) {
   try {
-    if (isBot(req)) {
+    const userAgent = req.headers['user-agent'] || '';
+
+    if (isBot(userAgent)) {
       return res.status(200).json({ ok: true, human: false });
     }
 
@@ -42,8 +33,22 @@ export default async function handler(req, res) {
 
     const country = req.headers['x-vercel-ip-country'] || 'Unknown';
     const city = req.headers['x-vercel-ip-city'] || 'Unknown';
-    const userAgent = req.headers['user-agent'] || 'Unknown';
+    const { data: existe, error: checkError } = await supabase
+      .from('visits')
+      .select('id')
+      .eq('ip', ip)
+      .limit(1);
 
+    if (checkError) {
+      console.error('Supabase check error:', checkError);
+      return res.status(500).json({ ok: false });
+    }
+
+    if (existe && existe.length > 0) {
+      return res.status(200).json({ ok: true, human: true, duplicated: true });
+    }
+
+    
     const { error } = await supabase.from('visits').insert([{
       ip,
       country,
@@ -56,7 +61,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false });
     }
 
-    return res.status(200).json({ ok: true, human: true });
+    return res.status(200).json({ ok: true, human: true, inserted: true });
   } catch (err) {
     console.error('API error:', err);
     return res.status(500).json({ ok: false });
