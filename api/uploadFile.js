@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+const { v4: uuidv4 } = require('uuid');
 import fetch from 'node-fetch';
 
 const BUCKET = process.env.R2_BUCKET;
