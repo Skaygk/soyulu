@@ -1,3 +1,7 @@
+export const config = {
+  runtime: 'nodejs18.x'
+};
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -9,21 +13,21 @@ const BOT_REGEX = /(bot|spider|crawl|slurp|fetch|facebook|telegram|discord|whats
 
 function esBot(req) {
   const ua = req.headers['user-agent'] || '';
-  const ch = req.headers['sec-ch-ua'] || '';
   const accept = req.headers['accept'] || '';
 
   if (!ua) return true;
   if (BOT_REGEX.test(ua)) return true;
-  if (ua.length < 20) return true;
   if (!accept.includes('text/html')) return true;
-  if (!ch) return true;
 
   return false;
 }
 
-async function geoPorIp(ip) {
+async function obtenerGeo(ip) {
   try {
-    const r = await fetch(`https://ipapi.co/${ip}/json/`);
+    const r = await fetch(`https://ipapi.co/${ip}/json/`, {
+      headers: { 'User-Agent': 'sigmiza-tracker' },
+      timeout: 3000
+    });
     const j = await r.json();
     return {
       country: j.country_name || 'Unknown',
@@ -50,9 +54,9 @@ export default async function handler(req, res) {
       'Unknown'
     ).replace('::ffff:', '');
 
-    const geo = await geoPorIp(ip);
-
     const userAgent = req.headers['user-agent'] || 'Unknown';
+
+    const geo = await obtenerGeo(ip);
 
     const { error } = await supabase.from('visits').insert([{
       ip,
@@ -62,11 +66,14 @@ export default async function handler(req, res) {
     }]);
 
     if (error) {
+      console.error('mmm', error);
       return res.status(500).json({ ok: false });
     }
 
-    res.status(200).json({ ok: true, human: true });
-  } catch {
-    res.status(500).json({ ok: false });
+    return res.status(200).json({ ok: true, human: true });
+
+  } catch (err) {
+    console.error('pff pto', err);
+    return res.status(500).json({ ok: false });
   }
 }
