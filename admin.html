@@ -13,7 +13,6 @@
   padding: 0;
 }
 
-
 body {
   background: #000;
   color: #b84cff;
@@ -23,7 +22,6 @@ body {
   min-height: 100vh;
 }
 
-
 .card {
   width: 360px;
   border: 2px solid #b84cff;
@@ -31,12 +29,19 @@ body {
   text-align: center;
 }
 
-
-h1 {
-  margin-bottom: 25px;
-  letter-spacing: 2px;
+.panel {
+  display: none;
+  width: 90vw;
+  max-width: 1100px;
+  border: 2px solid #b84cff;
+  padding: 20px;
+  text-align: center;
 }
 
+h1 {
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
 
 input {
   width: 100%;
@@ -52,9 +57,7 @@ input::placeholder {
   color: #7a2fc9;
 }
 
-
 button {
-  width: 100%;
   padding: 12px;
   background: #b84cff;
   border: none;
@@ -69,13 +72,8 @@ button:hover {
 }
 
 #deleteBtn {
-  width: auto;
-  padding: 10px 20px;
   margin-bottom: 15px;
   background: #ff00aa;
-  color: #000;
-  border: 2px solid #b84cff;
-  cursor: pointer;
 }
 
 #deleteBtn:hover {
@@ -86,7 +84,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 th, td {
@@ -99,14 +97,9 @@ th {
   background: #120012;
 }
 
-
-.panel {
-  display: none;
-  width: 90vw;
-  max-width: 900px;
-  border: 2px solid #b84cff;
-  padding: 20px;
-  text-align: center;
+td.ua {
+  max-width: 350px;
+  word-break: break-all;
 }
 </style>
 </head>
@@ -122,12 +115,14 @@ th {
 <div class="panel" id="panelDiv">
   <h1>PANEL DE VISITAS</h1>
   <button id="deleteBtn">BORRAR TODAS LAS IPs</button>
+
   <table>
     <thead>
       <tr>
         <th>IP</th>
         <th>Pais</th>
         <th>Ciudad</th>
+        <th>User-Agent</th>
         <th>Fecha</th>
       </tr>
     </thead>
@@ -136,11 +131,11 @@ th {
 </div>
 
 <script>
-const SESION_TIEMPO = 20 * 60 * 1000; 
+const SESION_TIEMPO = 20 * 60 * 1000;
 
 function guardarSesion(pass) {
   localStorage.setItem('admin_sesion', JSON.stringify({
-    pass: pass,
+    pass,
     expira: Date.now() + SESION_TIEMPO
   }));
 }
@@ -148,8 +143,8 @@ function guardarSesion(pass) {
 function sesionValida() {
   const s = localStorage.getItem('admin_sesion');
   if (!s) return false;
-  const data = JSON.parse(s);
-  if (Date.now() > data.expira) {
+  const d = JSON.parse(s);
+  if (Date.now() > d.expira) {
     localStorage.removeItem('admin_sesion');
     return false;
   }
@@ -159,25 +154,24 @@ function sesionValida() {
 function obtenerPassSesion() {
   const s = localStorage.getItem('admin_sesion');
   if (!s) return null;
-  const data = JSON.parse(s);
-  data.expira = Date.now() + SESION_TIEMPO;
-  localStorage.setItem('admin_sesion', JSON.stringify(data));
-  return data.pass;
+  const d = JSON.parse(s);
+  d.expira = Date.now() + SESION_TIEMPO;
+  localStorage.setItem('admin_sesion', JSON.stringify(d));
+  return d.pass;
 }
 
 async function login() {
   const pass = document.getElementById('pass').value.trim();
   if (!pass) return alert('Ingrese contraseña');
 
-  try {
-    const res = await fetch('/api/admin', { headers: { Authorization: pass } });
-    if (!res.ok) return alert('Contraseña incorrecta, deja de joder');
-    guardarSesion(pass);
-    mostrarPanel(await res.json());
-  } catch(e) {
-    console.error(e);
-    alert('Error en el login');
-  }
+  const res = await fetch('/api/admin', {
+    headers: { Authorization: pass }
+  });
+
+  if (!res.ok) return alert('Contraseña incorrecta, deja de joder');
+
+  guardarSesion(pass);
+  mostrarPanel(await res.json());
 }
 
 function mostrarPanel(data) {
@@ -186,31 +180,33 @@ function mostrarPanel(data) {
       <td>${v.ip}</td>
       <td>${v.country}</td>
       <td>${v.city}</td>
+      <td class="ua">${v.user_agent}</td>
       <td>${new Date(v.created_at).toLocaleString()}</td>
     </tr>
   `).join('');
+
   document.getElementById('loginDiv').style.display = 'none';
   document.getElementById('panelDiv').style.display = 'block';
 }
 
-document.getElementById('deleteBtn').addEventListener('click', async () => {
+document.getElementById('deleteBtn').onclick = async () => {
   if (!confirm('¿Seguro de borrar todas las IPs?')) return;
-  const pass = obtenerPassSesion();
-  if (!pass) return alert('Sesión expirada, ingrese contraseña');
 
-  try {
-    const res = await fetch('/api/delete', { method: 'POST', headers: { Authorization: pass } });
-    if (res.ok) {
-      alert('borradas');
-      document.getElementById('data').innerHTML = '';
-    } else {
-      alert('Error al borrar');
-    }
-  } catch(e) {
-    console.error(e);
+  const pass = obtenerPassSesion();
+  if (!pass) return alert('Sesion expirada');
+
+  const res = await fetch('/api/delete', {
+    method: 'POST',
+    headers: { Authorization: pass }
+  });
+
+  if (res.ok) {
+    alert('IPs borradas');
+    document.getElementById('data').innerHTML = '';
+  } else {
     alert('Error al borrar');
   }
-});
+};
 
 window.onload = async () => {
   if (!sesionValida()) return;
@@ -218,12 +214,13 @@ window.onload = async () => {
   const pass = obtenerPassSesion();
   if (!pass) return;
 
-  try {
-    const res = await fetch('/api/admin', { headers: { Authorization: pass } });
-    if (res.ok) mostrarPanel(await res.json());
-    else localStorage.removeItem('admin_sesion');
-  } catch(e) {
-    console.error(e);
+  const res = await fetch('/api/admin', {
+    headers: { Authorization: pass }
+  });
+
+  if (res.ok) {
+    mostrarPanel(await res.json());
+  } else {
     localStorage.removeItem('admin_sesion');
   }
 };
