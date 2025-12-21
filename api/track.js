@@ -7,19 +7,23 @@ const supabase = createClient(
 
 const BOT_KEYWORDS = [
   'bot','spider','crawl','slurp','fetch',
-  'facebook','linkedin','telegram','whatsapp',
-  'discord','pingdom','preview','headless'
+  'facebook','telegram','discord','whatsapp',
+  'linkedin','pingdom','preview','headless'
 ];
 
 function isBot(req) {
   const ua = (req.headers['user-agent'] || '').toLowerCase();
   const accept = req.headers['accept'] || '';
-  const secChUa = req.headers['sec-ch-ua'];
 
   if (!ua) return true;
-  if (BOT_KEYWORDS.some(k => ua.includes(k))) return true;
-  if (!accept.includes('text/html')) return true;
-  if (!secChUa) return true;
+
+  if (BOT_KEYWORDS.some(k => ua.includes(k))) {
+    return true;
+  }
+
+  if (!accept.includes('text/html')) {
+    return true;
+  }
 
   return false;
 }
