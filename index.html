@@ -12,30 +12,41 @@ body {
   color: #9400D3;
   text-align: center;
   margin: 0;
-  padding: 20px;
+  padding: 15px;
 }
 
 .logo-container {
-  text-align: center;
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 .logo {
-  width: 50%;      
-  max-width: 300px;    
-  height: auto;       
+  width: 60%;
+  max-width: 280px;
+  height: auto;
   animation: latido 1.8s infinite ease-in-out;
 }
 
 @keyframes latido {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); } 
+  50% { transform: scale(1.12); }
+}
+
+a {
+  display: inline-block;
+  margin: 10px 0 20px;
+  color: #b84cff;
+  text-decoration: none;
+  font-weight: bold;
+}
+.table-wrapper {
+  overflow-x: auto;
 }
 
 table {
-  width: 90%;
-  max-width: 900px;
-  margin: 20px auto;
+  width: 100%;
+  min-width: 700px;
+  max-width: 1000px;
+  margin: 0 auto;
   border-collapse: collapse;
   color: #fff;
 }
@@ -51,7 +62,7 @@ th {
 }
 
 button {
-  padding: 6px 12px;
+  padding: 8px 14px;
   background: #b84cff;
   border: none;
   font-weight: bold;
@@ -71,14 +82,14 @@ button.borrar:hover {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
 }
 
 #modal-box {
   background: #000;
   color: #b84cff;
   border: 2px solid #9400D3;
-  width: 80%;
+  width: 90%;
   max-width: 600px;
   margin: 10% auto;
   padding: 20px;
@@ -89,6 +100,31 @@ button.borrar:hover {
   float: right;
   cursor: pointer;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .logo {
+    width: 75%;
+    max-width: 220px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    display: none; 
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
 }
 </style>
 </head>
@@ -101,6 +137,7 @@ button.borrar:hover {
 
 <a href="upload.html">Subir carpeta</a>
 
+<div class="table-wrapper">
 <table>
 <thead>
 <tr>
@@ -115,6 +152,7 @@ button.borrar:hover {
 </thead>
 <tbody id="lista"></tbody>
 </table>
+</div>
 
 <div id="modal">
   <div id="modal-box">
@@ -130,82 +168,73 @@ button.borrar:hover {
 async function registrarVisita() {
   try {
     await fetch('/api/track', { method: 'POST' });
-  } catch (err) {
-    console.error('Error al registrar visita', err);
-  }
+  } catch {}
 }
 
 async function cargarCarpetas() {
-  try {
-    const res = await fetch('/api/obtenerCarpetas');
-    const data = await res.json();
-    const tbody = document.getElementById('lista');
-    tbody.innerHTML = '';
+  const res = await fetch('/api/obtenerCarpetas');
+  const data = await res.json();
+  const tbody = document.getElementById('lista');
+  tbody.innerHTML = '';
 
-    data.forEach(f => {
-      const tr = document.createElement('tr');
+  data.forEach(f => {
+    const tr = document.createElement('tr');
 
-      const t1 = document.createElement('td'); t1.textContent = f.titulo;
-      const t2 = document.createElement('td'); t2.textContent = f.autor;
-      const t3 = document.createElement('td'); t3.textContent = f.subido_por;
-      const t4 = document.createElement('td'); t4.textContent = f.contenido.length > 50 ? f.contenido.slice(0,50)+'...' : f.contenido;
-      const t5 = document.createElement('td'); t5.textContent = f.created_at ? new Date(f.created_at).toLocaleString() : 'Sin fecha';
+    const c = (txt) => {
+      const td = document.createElement('td');
+      td.textContent = txt;
+      return td;
+    };
 
-    
-      const t6 = document.createElement('td');
-      const btnVer = document.createElement('button');
-      btnVer.textContent = 'Ver';
-      btnVer.onclick = () => abrirModal(f);
-      t6.appendChild(btnVer);
+    tr.append(
+      c(f.titulo),
+      c(f.autor),
+      c(f.subido_por),
+      c(f.contenido.length > 50 ? f.contenido.slice(0,50)+'...' : f.contenido),
+      c(f.created_at ? new Date(f.created_at).toLocaleString() : 'Sin fecha')
+    );
 
-      const t7 = document.createElement('td');
-      const btnBorrar = document.createElement('button');
-      btnBorrar.textContent = 'Borrar';
-      btnBorrar.className = 'borrar';
-      btnBorrar.onclick = () => borrarCarpeta(f.id);
-      t7.appendChild(btnBorrar);
+    const tdVer = document.createElement('td');
+    const btnVer = document.createElement('button');
+    btnVer.textContent = 'Ver';
+    btnVer.onclick = () => abrirModal(f);
+    tdVer.appendChild(btnVer);
 
-      tr.append(t1,t2,t3,t4,t5,t6,t7);
-      tbody.appendChild(tr);
-    });
-  } catch(e) {
-    console.error(e);
-  }
+    const tdBorrar = document.createElement('td');
+    const btnBorrar = document.createElement('button');
+    btnBorrar.textContent = 'Borrar';
+    btnBorrar.className = 'borrar';
+    btnBorrar.onclick = () => borrarCarpeta(f.id);
+    tdBorrar.appendChild(btnBorrar);
+
+    tr.append(tdVer, tdBorrar);
+    tbody.appendChild(tr);
+  });
 }
 
 function abrirModal(f) {
-  document.getElementById('m-titulo').textContent = f.titulo;
-  document.getElementById('m-autor').textContent = 'Autor: ' + f.autor;
-  document.getElementById('m-contenido').textContent = f.contenido;
-  document.getElementById('m-fecha').textContent = f.created_at ? 'Fecha: '+new Date(f.created_at).toLocaleString() : '';
-  document.getElementById('modal').style.display = 'block';
+  mTitulo.textContent = f.titulo;
+  mAutor.textContent = 'Autor: ' + f.autor;
+  mContenido.textContent = f.contenido;
+  mFecha.textContent = f.created_at ? new Date(f.created_at).toLocaleString() : '';
+  modal.style.display = 'block';
 }
 
-document.getElementById('cerrar').onclick = () => {
-  document.getElementById('modal').style.display = 'none';
-};
+cerrar.onclick = () => modal.style.display = 'none';
 
 async function borrarCarpeta(id) {
-  const password = prompt('Ingrese la contraseña de admin para borrar este doxx:');
-  if(!password) return;
+  const password = prompt('Contraseña admin:');
+  if (!password) return;
 
-  try {
-    const res = await fetch('/api/borrarCarpeta', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ id, password })
-    });
-    const r = await res.json();
-    if(r.ok) {
-      alert('doxx borrado');
-      cargarCarpetas();
-    } else {
-      alert('Error: '+r.error);
-    }
-  } catch(e) {
-    console.error(e);
-    alert('no se pudo');
-  }
+  const res = await fetch('/api/borrarCarpeta', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id, password })
+  });
+
+  const r = await res.json();
+  if (r.ok) cargarCarpetas();
+  else alert(r.error);
 }
 
 window.onload = () => {
