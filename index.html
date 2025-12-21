@@ -38,6 +38,7 @@ a {
   text-decoration: none;
   font-weight: bold;
 }
+
 .table-wrapper {
   overflow-x: auto;
 }
@@ -103,28 +104,11 @@ button.borrar:hover {
 }
 
 @media (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-
-  .logo {
-    width: 75%;
-    max-width: 220px;
-  }
-
-  table {
-    font-size: 14px;
-  }
-
-  th:nth-child(4),
-  td:nth-child(4) {
-    display: none; 
-  }
-
-  button {
-    padding: 10px;
-    font-size: 14px;
-  }
+  body { padding: 10px; }
+  .logo { width: 75%; max-width: 220px; }
+  table { font-size: 14px; }
+  th:nth-child(4), td:nth-child(4) { display: none; }
+  button { padding: 10px; font-size: 14px; }
 }
 </style>
 </head>
@@ -165,6 +149,13 @@ button.borrar:hover {
 </div>
 
 <script>
+const modal = document.getElementById('modal');
+const cerrar = document.getElementById('cerrar');
+const mTitulo = document.getElementById('m-titulo');
+const mAutor = document.getElementById('m-autor');
+const mContenido = document.getElementById('m-contenido');
+const mFecha = document.getElementById('m-fecha');
+
 async function registrarVisita() {
   try {
     await fetch('/api/track', { method: 'POST' });
