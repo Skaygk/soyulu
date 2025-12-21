@@ -168,7 +168,7 @@ async function login() {
     headers: { Authorization: pass }
   });
 
-  if (!res.ok) return alert('Contraseña incorrecta, deja de joder');
+  if (!res.ok) return alert('Contraseña incorrecta');
 
   guardarSesion(pass);
   mostrarPanel(await res.json());
