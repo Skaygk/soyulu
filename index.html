@@ -8,7 +8,7 @@
 <style>
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #000;
   color: #9400D3;
   text-align: center;
@@ -16,13 +16,6 @@ body {
   padding: 15px;
 }
 
-a {
-  display: inline-block;
-  margin: 10px 0 20px;
-  color: #b84cff;
-  text-decoration: none;
-  font-weight: bold;
-}
 
 .logo-container {
   margin: 15px 0;
@@ -36,6 +29,15 @@ a {
 @keyframes latido {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.12); }
+}
+
+
+a {
+  display: inline-block;
+  margin: 10px 0 20px;
+  color: #b84cff;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 
@@ -59,6 +61,7 @@ th {
   color: #b84cff;
 }
 
+
 button {
   padding: 8px 14px;
   background: #b84cff;
@@ -74,6 +77,7 @@ button.borrar:hover {
   background: #ff33cc;
 }
 
+/* Modal */
 #modal {
   display: none;
   position: fixed;
@@ -96,6 +100,7 @@ button.borrar:hover {
   font-weight: bold;
 }
 
+
 .upload-container {
   margin: 20px auto;
   max-width: 400px;
@@ -115,6 +120,10 @@ button.borrar:hover {
 }
 #uploadBtn:hover {
   background: #6bdc6b;
+}
+#uploadStatus a {
+  color: #4caf50;
+  word-break: break-all;
 }
 
 @media (max-width: 768px) {
@@ -136,7 +145,7 @@ button.borrar:hover {
 <a href="upload.html">Subir carpeta</a>
 
 <div class="upload-container">
-  <input type="file" id="fileInput">
+  <input type="file" id="fileInput" accept="image/*,video/*">
   <button id="uploadBtn">Subir archivo</button>
   <p id="uploadStatus"></p>
 </div>
@@ -188,6 +197,7 @@ async function cargarCarpetas() {
 
   data.forEach(f => {
     const tr = document.createElement('tr');
+
     const c = txt => { const td = document.createElement('td'); td.textContent = txt; return td; };
 
     tr.append(
@@ -220,7 +230,7 @@ function abrirModal(f){
   mTitulo.textContent=f.titulo;
   mAutor.textContent='Autor: '+f.autor;
   mContenido.textContent=f.contenido;
-  mFecha.textContent=f.created_at?new Date(f.created_at).toLocaleString():'';
+  mFecha.textContent=f.created_at?new Date(f.created_at).toLocaleString():''; 
   modal.style.display='block';
 }
 
@@ -241,32 +251,40 @@ async function borrarCarpeta(id){
   else alert(r.error);
 }
 
+
 const uploadBtn = document.getElementById('uploadBtn');
 const fileInput = document.getElementById('fileInput');
 const uploadStatus = document.getElementById('uploadStatus');
 
-uploadBtn.onclick = async ()=>{
+uploadBtn.onclick = async () => {
   const file = fileInput.files[0];
   if(!file) { uploadStatus.textContent='Selecciona un archivo'; return; }
-  if(file.size>10*1024*1024){ uploadStatus.textContent='El archivo supera 10MB'; return; }
+  if(file.size > 10*1024*1024) { uploadStatus.textContent='El archivo supera 10MB'; return; }
 
   uploadStatus.textContent='Subiendo...';
 
   const formData = new FormData();
   formData.append('file', file);
 
-  try{
-    const res = await fetch('/api/uploadFile', { method:'POST', body:formData });
+  try {
+    const res = await fetch('/api/uploadFile', { method: 'POST', body: formData });
     const data = await res.json();
-    if(data.ok){ uploadStatus.innerHTML=`Archivo subido: <a href="${data.url}" target="_blank">${data.url}</a>`; }
-    else uploadStatus.textContent='Error al subir: '+data.error;
-  } catch(e){ uploadStatus.textContent='Error al subir'; console.error(e);}
-}
+    if(data.ok){
+      uploadStatus.innerHTML=`Archivo subido: <a href="${data.url}" target="_blank">${data.url}</a>`;
+      fileInput.value = '';
+    } else {
+      uploadStatus.textContent = 'Error al subir: ' + data.error;
+    }
+  } catch(e){
+    uploadStatus.textContent='Error al subir';
+    console.error(e);
+  }
+};
 
-window.onload = ()=>{
+window.onload = () => {
   registrarVisita();
   cargarCarpetas();
-}
+};
 </script>
 
 <script defer src="/_vercel/analytics/script.js"></script>
